@@ -99,7 +99,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.1"
+    version: "1.0.2"
   hl_image_picker_android:
     dependency: transitive
     description:
@@ -112,10 +112,10 @@ packages:
     dependency: transitive
     description:
       name: hl_image_picker_ios
-      sha256: "15cfae4b3f599a44247fd3c362dcb04a306be12f9328375c98adc2f609f234aa"
+      sha256: "478fcc36b178bdcd200254ae7b2cfcb3900eb2a42c7b3b64b4af7c81716af45f"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.2"
   hl_image_picker_platform_interface:
     dependency: transitive
     description:

@@ -1,3 +1,7 @@
+## 1.0.2
+
+* Fix error when open camera - (UINavigationController.delegate must be used from main thread only)
+
 ## 1.0.1
 
 * Add custom text for crop image UI

@@ -42,22 +42,24 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     
     private func openCamera() {
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {
-            HLImagePickerUtils.checkCameraPermission { [self] granted in
-                if granted {
-                    self.imagePicker.delegate = self
-                    self.imagePicker.sourceType = .camera
-                    self.imagePicker.allowsEditing = false
-                    if arguments?["cameraType"] as? String == "video" {
-                        self.imagePicker.mediaTypes = [kUTTypeMovie as String]
-                        self.imagePicker.videoQuality = .typeHigh
-                        let recordVideoMaxSecond = arguments?["recordVideoMaxSecond"] as? Int ?? 60
-                        self.imagePicker.videoMaximumDuration = TimeInterval(recordVideoMaxSecond)
+            DispatchQueue.main.async {
+                HLImagePickerUtils.checkCameraPermission { granted in
+                    if granted {
+                        DispatchQueue.main.async {
+                            self.imagePicker.delegate = self
+                            self.imagePicker.sourceType = .camera
+                            self.imagePicker.allowsEditing = false
+                            if self.arguments?["cameraType"] as? String == "video" {
+                                self.imagePicker.mediaTypes = [kUTTypeMovie as String]
+                                self.imagePicker.videoQuality = .typeHigh
+                                let recordVideoMaxSecond = self.arguments?["recordVideoMaxSecond"] as? Int ?? 60
+                                self.imagePicker.videoMaximumDuration = TimeInterval(recordVideoMaxSecond)
+                            }
+                            UIApplication.topViewController()?.present(self.imagePicker, animated: true, completion: nil)
+                        }
+                    } else {
+                        self.result!(FlutterError(code: "CAMERA_PERMISSION_DENIED", message: "Camera permission denied", details: nil))
                     }
-                    DispatchQueue.main.async {
-                        UIApplication.topViewController()?.present(self.imagePicker, animated: true, completion: nil)
-                    }
-                } else {
-                    result!(FlutterError(code: "CAMERA_PERMISSION_DENIED", message: "Camera permission denied", details: nil))
                 }
             }
         } else {
@@ -177,7 +179,9 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         
         let isSingleMode = configure.singleSelectedMode == true
         let isCropEnabled = arguments?["cropping"] as? Bool ?? false
-        let isImagePicker = withTLPHAssets.first?.type == .photo
+        let isPhoto = withTLPHAssets.first?.type == .photo
+        let isLivePhoto = withTLPHAssets.first?.type == .livePhoto
+        let isImagePicker = isPhoto || isLivePhoto
         if (isImagePicker && isCropEnabled && isSingleMode) {
             guard let asset = withTLPHAssets.first?.fullResolutionImage else { return }
             openCropper(image: asset)

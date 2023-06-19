@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hl_image_picker_ios/hl_image_picker_ios.dart';
 
@@ -25,22 +27,43 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: ElevatedButton(
-              onPressed: () async {
-                final picker = await HLImagePickerIOS().openPicker(
-                  mediaType: MediaType.image,
-                  cropping: true,
-                  style: HLPickerStyle(
-                    maxFileSizeErrorText: "File too big",
-                    tapHereToChangeText: "Tap tap",
-                    cropCancelText: "Back",
-                    cropDoneText: "Finish"
-                  ),
-                );
-                print(picker);
-              },
-              child: const Text('Open Picker')),
+        body: Column(
+          children: [
+            ElevatedButton(
+                onPressed: () async {
+                  final picker = await HLImagePickerIOS().openPicker(
+                    mediaType: MediaType.image,
+                    cropping: true,
+                    style: HLPickerStyle(
+                        maxFileSizeErrorText: "File too big",
+                        tapHereToChangeText: "Tap tap",
+                        cropCancelText: "Back",
+                        cropDoneText: "Finish"),
+                  );
+                  print(jsonEncode(picker));
+                },
+                child: const Text('Open Picker')),
+            ElevatedButton(
+                onPressed: () async {
+                  try {
+                    final picker = await HLImagePickerIOS().openCamera(
+                      cameraType: CameraType.image,
+                      cropping: true,
+                      style: HLPickerStyle(
+                        maxFileSizeErrorText: "File too big",
+                        tapHereToChangeText: "Tap tap",
+                        cropCancelText: "Back",
+                        cropDoneText: "Finish",
+                        cropTitleText: "Crop image",
+                      ),
+                    );
+                    print(jsonEncode(picker));
+                  } catch (e) {
+                    print(e.toString());
+                  }
+                },
+                child: const Text('Open Camera')),
+          ],
         ),
       ),
     );
