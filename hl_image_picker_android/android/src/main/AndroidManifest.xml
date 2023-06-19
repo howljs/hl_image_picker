@@ -1,0 +1,15 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.howl.hl_image_picker">
+  <queries package="${applicationId}">
+      <intent>
+          <action android:name="android.media.action.IMAGE_CAPTURE">
+
+          </action>
+      </intent>
+      <intent>
+          <action android:name="android.media.action.ACTION_VIDEO_CAPTURE">
+
+          </action>
+      </intent>
+  </queries>
+</manifest>

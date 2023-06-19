@@ -1,0 +1,39 @@
+PODS:
+  - CropViewController (2.6.1)
+  - Flutter (1.0.0)
+  - hl_image_picker_ios (0.0.1):
+    - CropViewController
+    - Flutter
+    - TLPhotoPicker
+  - integration_test (0.0.1):
+    - Flutter
+  - TLPhotoPicker (2.1.9)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - hl_image_picker_ios (from `.symlinks/plugins/hl_image_picker_ios/ios`)
+  - integration_test (from `.symlinks/plugins/integration_test/ios`)
+
+SPEC REPOS:
+  trunk:
+    - CropViewController
+    - TLPhotoPicker
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  hl_image_picker_ios:
+    :path: ".symlinks/plugins/hl_image_picker_ios/ios"
+  integration_test:
+    :path: ".symlinks/plugins/integration_test/ios"
+
+SPEC CHECKSUMS:
+  CropViewController: 58fb440f30dac788b129d2a1f24cffdcb102669c
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  hl_image_picker_ios: 0cc30e82a69e9068e4b829934de47f7b0da1e22d
+  integration_test: 13825b8a9334a850581300559b8839134b124670
+  TLPhotoPicker: 939c40eaad130b69f9571e61e021e8120fa76329
+
+PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
+
+COCOAPODS: 1.12.1

@@ -1,0 +1,31 @@
+name: hl_image_picker
+description: A Flutter plugin for iOS and Android for picking images, videos from the image library.
+repository: https://github.com/howljs/hl_image_picker/hl_image_picker
+issue_tracker: https://github.com/howljs/hl_image_picker/issues
+
+version: 1.0.0
+
+environment:
+  sdk: '>=3.0.5 <4.0.0'
+  flutter: ">=3.3.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  hl_image_picker_platform_interface: ^1.0.0
+  hl_image_picker_ios: ^1.0.0
+  hl_image_picker_android: ^1.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  plugin_platform_interface: ^2.0.2
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        default_package: hl_image_picker_android
+      ios:
+        default_package: hl_image_picker_ios

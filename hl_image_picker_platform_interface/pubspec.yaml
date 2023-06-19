@@ -1,0 +1,20 @@
+name: hl_image_picker_platform_interface
+description: A common platform interface for the hl_image_picker plugin.
+repository: https://github.com/howljs/hl_image_picker/hl_image_picker_platform_interface
+issue_tracker: https://github.com/howljs/hl_image_picker/issues
+
+version: 1.0.0
+
+environment:
+  sdk: '>=3.0.5 <4.0.0'
+  flutter: ">=3.3.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
