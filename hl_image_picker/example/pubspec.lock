@@ -99,31 +99,31 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.0"
+    version: "1.0.1"
   hl_image_picker_android:
     dependency: transitive
     description:
       name: hl_image_picker_android
-      sha256: f3fc3fb90d3ff10f69b025171d19010d085c7ee1add923d2d9f2309034141eca
+      sha256: "1700a232760330a7e8433b37e608707572787a2d7795a7ef6f92115b376e2c6a"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   hl_image_picker_ios:
     dependency: transitive
     description:
       name: hl_image_picker_ios
-      sha256: "563594f9d74b709fb2c0ebee5421c354c0b02ed0704941e21559829dbf614111"
+      sha256: "15cfae4b3f599a44247fd3c362dcb04a306be12f9328375c98adc2f609f234aa"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   hl_image_picker_platform_interface:
     dependency: transitive
     description:
       name: hl_image_picker_platform_interface
-      sha256: f3fc42d1b0c2e4000f2f67e3a8a1182e772e3dd709781a4b6d6502b09e2f1450
+      sha256: a05b029aefc5f0a8a82e97710f680c21ff9010ab10cb545e78c11632bee255c5
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   integration_test:
     dependency: "direct dev"
     description: flutter

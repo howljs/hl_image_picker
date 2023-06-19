@@ -98,6 +98,7 @@ class HLImagePickerIOS extends HLImagePickerPlatform {
     bool? isExportThumbnail,
     double? thumbnailCompressQuality,
     CompressFormat? thumbnailCompressFormat,
+    HLPickerStyle? style,
   }) async {
     const defaultPresets = [
       CropAspectRatioPreset.original,
@@ -120,6 +121,7 @@ class HLImagePickerIOS extends HLImagePickerPlatform {
       'isExportThumbnail': isExportThumbnail,
       'thumbnailCompressQuality': thumbnailCompressQuality,
       'thumbnailCompressFormat': thumbnailCompressFormat?.value,
+      'style': style?.toJson() ?? HLPickerStyle().toJson(),
     });
     return HLImagePickerItem.fromJson(data);
   }

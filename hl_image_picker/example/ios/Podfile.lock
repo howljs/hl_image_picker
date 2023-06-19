@@ -1,7 +1,7 @@
 PODS:
   - CropViewController (2.6.1)
   - Flutter (1.0.0)
-  - hl_image_picker_ios (0.0.1):
+  - hl_image_picker_ios (1.0.1):
     - CropViewController
     - Flutter
     - TLPhotoPicker
@@ -30,7 +30,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   CropViewController: 58fb440f30dac788b129d2a1f24cffdcb102669c
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  hl_image_picker_ios: 0cc30e82a69e9068e4b829934de47f7b0da1e22d
+  hl_image_picker_ios: 1c2c95410baaa0ad3b214f14b74d8b4ceceeb685
   integration_test: 13825b8a9334a850581300559b8839134b124670
   TLPhotoPicker: 939c40eaad130b69f9571e61e021e8120fa76329
 

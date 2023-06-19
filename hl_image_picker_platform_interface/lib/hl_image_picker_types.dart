@@ -148,6 +148,8 @@ class DefaultText {
   static const emptyMediaText = 'Empty media';
   static const loadingText = 'Loading...';
   static const okText = 'OK';
+  static const cropDoneText = 'Done';
+  static const cropCancelText = 'Cancel';
 }
 
 class HLPickerStyle {
@@ -164,6 +166,9 @@ class HLPickerStyle {
   late final String emptyMediaText;
   late final String loadingText;
   late final String okText;
+  late final String cropDoneText;
+  late final String cropCancelText;
+  late final String? cropTitleText;
 
   HLPickerStyle({
     this.maxDurationErrorText = DefaultText.maxDurationErrorText,
@@ -177,6 +182,9 @@ class HLPickerStyle {
     this.emptyMediaText = DefaultText.emptyMediaText,
     this.loadingText = DefaultText.loadingText,
     this.okText = DefaultText.okText,
+    this.cropDoneText = DefaultText.cropDoneText,
+    this.cropCancelText = DefaultText.cropCancelText,
+    this.cropTitleText,
   });
 
   HLPickerStyle.fromJson(Map<String, dynamic> json) {
@@ -191,6 +199,9 @@ class HLPickerStyle {
     emptyMediaText = json['emptyMediaText'];
     loadingText = json['loadingText'];
     okText = json['okText'];
+    cropTitleText = json['cropTitleText'];
+    cropDoneText = json['cropDoneText'];
+    cropCancelText = json['cropCancelText'];
   }
 
   Map<String, dynamic> toJson() {
@@ -206,6 +217,9 @@ class HLPickerStyle {
     data['emptyMediaText'] = emptyMediaText;
     data['loadingText'] = loadingText;
     data['okText'] = okText;
+    data['cropTitleText'] = cropTitleText;
+    data['cropDoneText'] = cropDoneText;
+    data['cropCancelText'] = cropCancelText;
     return data;
   }
 }

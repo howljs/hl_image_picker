@@ -73,6 +73,7 @@ class HLImagePicker {
     bool? isExportThumbnail,
     double? thumbnailCompressQuality,
     CompressFormat? thumbnailCompressFormat,
+    HLPickerStyle? style,
   }) async {
     return platform.openCamera(
       cameraType: cameraType,
@@ -85,6 +86,7 @@ class HLImagePicker {
       isExportThumbnail: isExportThumbnail,
       thumbnailCompressQuality: thumbnailCompressQuality,
       thumbnailCompressFormat: thumbnailCompressFormat,
+      style: style,
     );
   }
 }

@@ -38,6 +38,9 @@ class _MyAppState extends State<MyApp> {
                     style: HLPickerStyle(
                       maxFileSizeErrorText: "File too big",
                       tapHereToChangeText: "Tap tap",
+                      cropCancelText: "Back",
+                      cropDoneText: "Finish",
+                      cropTitleText: "Crop image",
                     ),
                   );
                   print(jsonEncode(picker));
@@ -47,7 +50,16 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   try {
                     final picker = await HLImagePicker().openCamera(
-                        cameraType: CameraType.image, cropping: true);
+                      cameraType: CameraType.image,
+                      cropping: true,
+                      style: HLPickerStyle(
+                        maxFileSizeErrorText: "File too big",
+                        tapHereToChangeText: "Tap tap",
+                        cropCancelText: "Back",
+                        cropDoneText: "Finish",
+                        cropTitleText: "Crop image",
+                      ),
+                    );
                     print(jsonEncode(picker));
                   } catch (e) {
                     print(e.toString());

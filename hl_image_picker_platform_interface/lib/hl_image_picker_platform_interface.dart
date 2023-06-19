@@ -60,6 +60,7 @@ abstract class HLImagePickerPlatform extends PlatformInterface {
     bool? isExportThumbnail,
     double? thumbnailCompressQuality,
     CompressFormat? thumbnailCompressFormat,
+    HLPickerStyle? style,
   }) {
     throw UnimplementedError('openCamera() has not been implemented.');
   }

@@ -28,7 +28,16 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: ElevatedButton(
               onPressed: () async {
-                final picker = await HLImagePickerIOS().openPicker();
+                final picker = await HLImagePickerIOS().openPicker(
+                  mediaType: MediaType.image,
+                  cropping: true,
+                  style: HLPickerStyle(
+                    maxFileSizeErrorText: "File too big",
+                    tapHereToChangeText: "Tap tap",
+                    cropCancelText: "Back",
+                    cropDoneText: "Finish"
+                  ),
+                );
                 print(picker);
               },
               child: const Text('Open Picker')),

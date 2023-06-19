@@ -334,6 +334,11 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     private func openCropper(image: UIImage) {
         let cropViewController = CropViewController(image: image)
         cropViewController.delegate = self
+        cropViewController.doneButtonTitle = uiStyle?["cropDoneText"] as? String ?? "Done"
+        cropViewController.cancelButtonTitle = uiStyle?["cropCancelText"] as? String ?? "Cancel"
+        if let cropTitle = uiStyle?["cropTitleText"] as? String {
+            cropViewController.title = cropTitle
+        }
         let aspectRatioX = arguments?["ratioX"] as? Double
         let aspectRatioY = arguments?["ratioY"] as? Double
         if aspectRatioX != nil && aspectRatioY != nil {

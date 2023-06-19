@@ -99,15 +99,15 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.0"
+    version: "1.0.1"
   hl_image_picker_platform_interface:
     dependency: transitive
     description:
       name: hl_image_picker_platform_interface
-      sha256: f3fc42d1b0c2e4000f2f67e3a8a1182e772e3dd709781a4b6d6502b09e2f1450
+      sha256: a05b029aefc5f0a8a82e97710f680c21ff9010ab10cb545e78c11632bee255c5
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   integration_test:
     dependency: "direct dev"
     description: flutter
