@@ -28,7 +28,8 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: ElevatedButton(
               onPressed: () async {
-                final picker = await HLImagePickerAndroid().openPicker();
+                final picker = await HLImagePickerAndroid()
+                    .openPicker(maxSelectedAssets: 1, cropping: true);
                 print(picker);
               },
               child: const Text('Open Picker')),

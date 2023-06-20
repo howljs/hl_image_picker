@@ -1,14 +1,25 @@
 package com.howl.hl_image_picker
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.text.TextUtils
+import androidx.fragment.app.Fragment
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.PictureMimeType
+import com.luck.picture.lib.config.SelectLimitType
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.config.SelectModeConfig
+import com.luck.picture.lib.dialog.RemindDialog
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
+import com.luck.picture.lib.permissions.PermissionConfig
+import com.luck.picture.lib.style.BottomNavBarStyle
+import com.luck.picture.lib.style.PictureSelectorStyle
+import com.luck.picture.lib.style.SelectMainStyle
+import com.luck.picture.lib.style.TitleBarStyle
 import com.luck.picture.lib.utils.MediaUtils
 import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.model.AspectRatio
@@ -37,17 +48,20 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private var flutterCall: MethodCall? = null
     private var mediaPickerResult: Result? = null
+    private lateinit var uiStyle: Map<String, Any>
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
             "openPicker" -> {
                 this.flutterCall = call
+                this.uiStyle = call.argument<Map<String, Any>>("style") ?: mapOf()
                 this.mediaPickerResult = result
                 openPicker()
             }
 
             "openCamera" -> {
                 this.flutterCall = call
+                this.uiStyle = call.argument<Map<String, Any>>("style") ?: mapOf()
                 this.mediaPickerResult = result
                 openCamera()
             }
@@ -69,46 +83,13 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 .setCropEngine(getCropFileEngine())
                 .setVideoThumbnailListener(getVideoThumbnail())
                 .setRecordVideoMaxSecond(recordVideoMaxSecond)
+                .setPermissionDeniedListener { fragment, permissionArray, _, _ ->
+                    handlePermissionDenied(fragment, permissionArray)
+                }
                 .forResultActivity(object : OnResultCallbackListener<LocalMedia> {
                     override fun onResult(result: ArrayList<LocalMedia>?) {
                         if (result != null) {
-                            val media = result[0]
-                            if (media.width == 0 || media.height == 0) {
-                                if (PictureMimeType.isHasImage(media.mimeType)) {
-                                    val imageExtraInfo = MediaUtils.getImageSize(applicationContext, media.path)
-                                    media.width = imageExtraInfo.width
-                                    media.height = imageExtraInfo.height
-                                } else if (PictureMimeType.isHasVideo(media.mimeType)) {
-                                    val imageExtraInfo = MediaUtils.getVideoSize(applicationContext, media.path)
-                                    media.width = imageExtraInfo.width
-                                    media.height = imageExtraInfo.height
-                                }
-                            }
-
-                            val item = mutableMapOf<String, Any>()
-                            item["id"] = media.path
-                            item["name"] = media.fileName
-                            item["mimeType"] = media.mimeType
-                            item["size"] = media.size
-                            item["type"] = "image"
-                            if (media.mimeType.startsWith("video")) {
-                                item["type"] = "video"
-                                item["duration"] = media.duration.toDouble()
-                                if (media.videoThumbnailPath != null) {
-                                    item["thumbnail"] = media.videoThumbnailPath
-                                }
-                            }
-
-                            if (media.isCut) {
-                                item["width"] = media.cropImageWidth
-                                item["height"] = media.cropImageHeight
-                                item["path"] = media.cutPath
-                            } else {
-                                item["width"] = media.width
-                                item["height"] = media.height
-                                item["path"] = media.realPath
-                            }
-                            mediaPickerResult?.success(item)
+                            mediaPickerResult?.success(buildResponse(result[0]))
                         } else {
                             mediaPickerResult?.error("CAMERA_ERROR", "Camera error", null)
                         }
@@ -159,48 +140,44 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 .setVideoThumbnailListener(getVideoThumbnail())
                 .setRecordVideoMaxSecond(recordVideoMaxSecond)
                 .setSelectMaxDurationSecond(maxDuration)
+                .setPermissionDeniedListener { fragment, permissionArray, _, _ ->
+                    handlePermissionDenied(fragment, permissionArray)
+                }
+                .setCustomLoadingListener { context -> CustomLoadingDialog(context, uiStyle.getOrElse("loadingText") { "Loading" } as String) }
+                .setSelectLimitTipsListener { context, _, _, limitType ->
+                    when (limitType) {
+                        SelectLimitType.SELECT_MAX_SELECT_LIMIT -> {
+                            showDialog(context, uiStyle.getOrElse("maxSelectedAssetsErrorText") { "Exceeded maximum amount of assets" } as String)
+                            true
+                        }
+
+                        SelectLimitType.SELECT_MAX_VIDEO_SECOND_SELECT_LIMIT -> {
+                            showDialog(context, uiStyle.getOrElse("maxDurationErrorText") { "Exceeded maximum duration of the video" } as String)
+                            true
+                        }
+
+                        SelectLimitType.SELECT_MAX_VIDEO_SELECT_LIMIT -> {
+                            showDialog(context, uiStyle.getOrElse("maxSelectedAssetsErrorText") { "Max select assets" } as String)
+                            true
+                        }
+
+                        SelectLimitType.SELECT_MAX_FILE_SIZE_LIMIT -> {
+                            showDialog(context, uiStyle.getOrElse("maxFileSizeErrorText") {"Maximum file size exceeded"} as String)
+                            true
+                        }
+
+                        else -> false
+                    }
+                }
+                .setDefaultAlbumName(uiStyle.getOrElse("defaultAlbumName") { "Recents" } as String)
+                .setSelectorUIStyle(handleUIStyle())
                 .isEmptyResultReturn(true)
                 .forResult(object : OnResultCallbackListener<LocalMedia?> {
                     override fun onResult(result: ArrayList<LocalMedia?>?) {
                         val mediaList: MutableList<Map<String, Any>> = mutableListOf()
                         result?.forEach { media ->
                             if (media != null) {
-                                if (media.width == 0 || media.height == 0) {
-                                    if (PictureMimeType.isHasImage(media.mimeType)) {
-                                        val imageExtraInfo = MediaUtils.getImageSize(applicationContext, media.path)
-                                        media.width = imageExtraInfo.width
-                                        media.height = imageExtraInfo.height
-                                    } else if (PictureMimeType.isHasVideo(media.mimeType)) {
-                                        val imageExtraInfo = MediaUtils.getVideoSize(applicationContext, media.path)
-                                        media.width = imageExtraInfo.width
-                                        media.height = imageExtraInfo.height
-                                    }
-                                }
-
-                                val item = mutableMapOf<String, Any>()
-                                item["id"] = media.path
-                                item["name"] = media.fileName
-                                item["mimeType"] = media.mimeType
-                                item["size"] = media.size
-                                item["type"] = "image"
-                                if (media.mimeType.startsWith("video")) {
-                                    item["type"] = "video"
-                                    item["duration"] = media.duration.toDouble()
-                                    if (media.videoThumbnailPath != null) {
-                                        item["thumbnail"] = media.videoThumbnailPath
-                                    }
-                                }
-
-                                if (media.isCut) {
-                                    item["width"] = media.cropImageWidth
-                                    item["height"] = media.cropImageHeight
-                                    item["path"] = media.cutPath
-                                } else {
-                                    item["width"] = media.width
-                                    item["height"] = media.height
-                                    item["path"] = media.realPath
-                                }
-                                mediaList.add(item)
+                                mediaList.add(buildResponse(media))
                             }
                         }
                         mediaPickerResult?.success(mediaList)
@@ -208,6 +185,111 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                     override fun onCancel() {}
                 })
+    }
+
+
+    private fun handleUIStyle(): PictureSelectorStyle {
+        val style = PictureSelectorStyle()
+        val mainStyle = SelectMainStyle()
+        mainStyle.isDarkStatusBarBlack = true
+        mainStyle.mainListBackgroundColor = Color.parseColor("#FFFFFF")
+        mainStyle.previewBackgroundColor = Color.parseColor("#FFFFFF")
+        mainStyle.isPreviewDisplaySelectGallery = true
+        mainStyle.isPreviewSelectRelativeBottom = true
+        mainStyle.isCompleteSelectRelativeTop = true
+        mainStyle.selectText = uiStyle.getOrElse("doneText") {"Done"} as String
+        mainStyle.selectNormalText = uiStyle.getOrElse("doneText") {"Done"} as String
+        mainStyle.selectTextColor = Color.parseColor("#007AFF")
+        mainStyle.selectNormalTextColor = Color.parseColor("#007AFF")
+        val maxSelectedAssets = flutterCall?.argument<Int>("maxSelectedAssets") ?: 1
+        if (maxSelectedAssets != 1) {
+            mainStyle.isSelectNumberStyle = true
+            mainStyle.selectBackground = R.drawable.hl_multiple_selector
+        } else {
+            mainStyle.selectBackground = R.drawable.hl_single_selector
+        }
+        mainStyle.previewSelectBackground = R.drawable.hl_preview_selector
+        mainStyle.adapterCameraText = " "
+        mainStyle.adapterCameraTextSize = 1
+
+        val titleBarStyle = TitleBarStyle()
+        titleBarStyle.isHideCancelButton = true
+        titleBarStyle.titleBackgroundColor = Color.parseColor("#FFFFFF")
+        titleBarStyle.titleTextColor = Color.parseColor("#000000")
+        titleBarStyle.titleLeftBackResource = R.drawable.ps_ic_black_back
+        titleBarStyle.titleDrawableRightResource = R.drawable.hl_arrow_down
+        titleBarStyle.isDisplayTitleBarLine = true
+
+        val bottomBarStyle = BottomNavBarStyle()
+        bottomBarStyle.bottomNarBarBackgroundColor = Color.parseColor("#FFFFFF")
+        bottomBarStyle.isCompleteCountTips = false
+        bottomBarStyle.bottomPreviewSelectTextColor = Color.parseColor("#007AFF")
+
+        style.selectMainStyle = mainStyle
+        style.titleBarStyle = titleBarStyle
+        style.bottomBarStyle = bottomBarStyle
+        return style
+    }
+
+    private fun handlePermissionDenied(fragment: Fragment, permissionArray: Array<String>?) {
+        val message: String = if (TextUtils.equals(permissionArray?.get(0), PermissionConfig.CAMERA[0])) {
+            uiStyle.getOrElse("noCameraPermissionText") {"The camera could not be started. Please allow camera access and try again."} as String
+        } else if (TextUtils.equals(permissionArray?.get(0), Manifest.permission.RECORD_AUDIO)) {
+            uiStyle.getOrElse("noRecordAudioPermissionText") {"Audio recording permission denied"} as String
+        } else {
+            uiStyle.getOrElse("noAlbumPermissionText") {"The album could not be launched. Please allow access to and try again."} as String
+        }
+        showDialog(fragment.context, message)
+    }
+
+    private fun showDialog(context: Context?, message: String) {
+        val dialog = RemindDialog.buildDialog(context, message)
+        dialog.setButtonText(uiStyle.getOrElse("okText") {"OK"} as String)
+        dialog.setButtonTextColor(Color.parseColor("#007AFF"))
+        dialog.setContentTextColor(Color.parseColor("#000000"))
+        dialog.setOnDialogClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    private fun buildResponse(media: LocalMedia): Map<String, Any> {
+        if (media.width == 0 || media.height == 0) {
+            if (PictureMimeType.isHasImage(media.mimeType)) {
+                val imageExtraInfo = MediaUtils.getImageSize(applicationContext, media.path)
+                media.width = imageExtraInfo.width
+                media.height = imageExtraInfo.height
+            } else if (PictureMimeType.isHasVideo(media.mimeType)) {
+                val imageExtraInfo = MediaUtils.getVideoSize(applicationContext, media.path)
+                media.width = imageExtraInfo.width
+                media.height = imageExtraInfo.height
+            }
+        }
+
+        val item = mutableMapOf<String, Any>()
+        item["id"] = media.path
+        item["name"] = media.fileName
+        item["mimeType"] = media.mimeType
+        item["size"] = media.size
+        item["type"] = "image"
+        if (media.mimeType.startsWith("video")) {
+            item["type"] = "video"
+            item["duration"] = media.duration.toDouble()
+            if (media.videoThumbnailPath != null) {
+                item["thumbnail"] = media.videoThumbnailPath
+            }
+        }
+
+        if (media.isCut) {
+            item["width"] = media.cropImageWidth
+            item["height"] = media.cropImageHeight
+            item["path"] = media.cutPath
+        } else {
+            item["width"] = media.width
+            item["height"] = media.height
+            item["path"] = media.realPath
+        }
+        return item
     }
 
     private fun getCropFileEngine(): ImageFileCropEngine? {

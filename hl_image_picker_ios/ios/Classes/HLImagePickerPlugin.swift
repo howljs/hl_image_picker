@@ -130,6 +130,8 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             break
         default: break
         }
+        let defaultAlbumName = uiStyle?["defaultAlbumName"] as? String ?? "Recents"
+        configure.customLocalizedTitle = ["Recents": defaultAlbumName]
         configure.usedCameraButton = arguments?["usedCameraButton"] as? Bool ?? true
         let recordVideoMaxSecond = arguments?["recordVideoMaxSecond"] as? Int ?? 60
         configure.maxVideoDuration = TimeInterval(recordVideoMaxSecond)
@@ -236,7 +238,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         let maxDuration = arguments?["maxDuration"] as? Int ?? 0
         if isVideo && maxDuration > 0 {
             if phAsset.duration > TimeInterval(maxDuration) {
-                showAlert(message: "maxDurationErrorText")
+                showAlert(message: "maxDurationErrorText", defaultText: "Exceeded maximum duration of the video")
                 return false;
             }
         }
@@ -247,7 +249,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         }
         let imageSize = getAssetSize(asset: phAsset)
         if imageSize > maxSize {
-            showAlert(message: "maxFileSizeErrorText")
+            showAlert(message: "maxFileSizeErrorText", defaultText: "Maximum file size exceeded")
             return false
         }
         return true
@@ -255,16 +257,16 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     
     public func handleNoAlbumPermissions(picker: TLPhotosPickerViewController) {
         picker.dismiss(animated: true) {
-            self.showAlert(message: "noAlbumPermissionText")
+            self.showAlert(message: "noAlbumPermissionText", defaultText: "The album could not be launched. Please allow access to and try again.")
         }
     }
     
     public func handleNoCameraPermissions(picker: TLPhotosPickerViewController) {
-        showAlert(message: "noCameraPermissionText")
+        showAlert(message: "noCameraPermissionText", defaultText: "The camera could not be started. Please allow camera access and try again.")
     }
     
     public func didExceedMaximumNumberOfSelection(picker: TLPhotosPickerViewController) {
-        showAlert(message: "maxSelectedAssetsErrorText")
+        showAlert(message: "maxSelectedAssetsErrorText", defaultText: "Exceeded maximum amount of assets")
     }
     
     private func getAssetSize(asset: PHAsset) -> Int64 {
@@ -308,8 +310,8 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         return media
     }
     
-    private func showAlert(message: String) {
-        let alert = UIAlertController(title: "", message: uiStyle?[message] as? String ?? message, preferredStyle: .alert)
+    private func showAlert(message: String, defaultText: String? = "") {
+        let alert = UIAlertController(title: "", message: uiStyle?[message] as? String ?? defaultText, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: uiStyle?["okText"] as? String ?? "OK", style: .default, handler: nil))
         UIApplication.topViewController()?.present(alert, animated: true, completion: nil)
     }

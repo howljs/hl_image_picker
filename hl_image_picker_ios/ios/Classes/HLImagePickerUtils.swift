@@ -1,4 +1,5 @@
 import AVFoundation
+import Photos
 import MobileCoreServices
 
 class HLImagePickerUtils {
@@ -146,5 +147,16 @@ class HLImagePickerUtils {
             // Handle any future cases if needed.
             completion(false)
         }
+    }
+    
+    static func getImageData(phasset: PHAsset?, resultHandler: @escaping (Data?, String?, UIImage.Orientation, [AnyHashable : Any]?) -> Void) {
+        guard let asset = phasset else { return }
+        let options = PHImageRequestOptions()
+        options.isSynchronous = false
+        options.isNetworkAccessAllowed = true
+        options.deliveryMode = .opportunistic
+        options.version = .current
+        options.resizeMode = .exact
+        PHCachingImageManager().requestImageData(for: asset, options: options, resultHandler: resultHandler)
     }
 }

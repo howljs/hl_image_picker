@@ -133,58 +133,101 @@ extension CompressFormatX on CompressFormat {
   }
 }
 
-class DefaultText {
-  const DefaultText._();
-  static const maxDurationErrorText = 'Duration error';
-  static const maxFileSizeErrorText = 'File size error';
-  static const noAlbumPermissionText = 'No album permission';
-  static const noCameraPermissionText = 'No Camera permission';
-  static const maxSelectedAssetsErrorText = 'Max selected assets';
-  static const cancelText = 'Cancel';
-  static const doneText = 'Done';
-
-  // IOS
-  static const tapHereToChangeText = 'Tap here';
-  static const emptyMediaText = 'Empty media';
-  static const loadingText = 'Loading...';
-  static const okText = 'OK';
-  static const cropDoneText = 'Done';
-  static const cropCancelText = 'Cancel';
-}
-
 class HLPickerStyle {
-  late final String maxDurationErrorText;
-  late final String maxFileSizeErrorText;
-  late final String noAlbumPermissionText;
-  late final String noCameraPermissionText;
-  late final String maxSelectedAssetsErrorText;
-  late final String cancelText;
-  late final String doneText;
+  /// Default value:
+  ///
+  /// **'Exceeded maximum duration of the video'**
+  late final String? maxDurationErrorText;
 
-  // IOS
-  late final String tapHereToChangeText;
-  late final String emptyMediaText;
-  late final String loadingText;
-  late final String okText;
-  late final String cropDoneText;
-  late final String cropCancelText;
+  /// Default value:
+  ///
+  /// **'Maximum file size exceeded'**
+  late final String? maxFileSizeErrorText;
+
+  /// Default value:
+  ///
+  /// **'The album could not be launched. Please allow access to and try again.'**
+  late final String? noAlbumPermissionText;
+
+  /// Default value:
+  ///
+  /// **'The camera could not be started. Please allow camera access and try again.'**
+  late final String? noCameraPermissionText;
+
+  /// Default value:
+  ///
+  /// **'Exceeded maximum amount of assets'**
+  late final String? maxSelectedAssetsErrorText;
+
+  /// Default value:
+  ///
+  /// **'Done'**
+  late final String? doneText;
+
+  /// (Android only) Default value:
+  ///
+  /// **'Audio recording permission denied'**
+  late final String? noRecordAudioPermissionText;
+
+  /// Default value:
+  ///
+  /// **'OK'**
+  late final String? okText;
+
+  /// Default value:
+  ///
+  /// **'Loading'**
+  late final String? loadingText;
+
+  /// Default value:
+  ///
+  /// **'Recents'**
+  late final String? defaultAlbumName;
+
+  /// (iOS Only) Default value:
+  ///
+  /// **'Cancel'**
+  late final String? cancelText;
+
+  /// (iOS Only) Default value:
+  ///
+  /// **'Tap here to change'**
+  late final String? tapHereToChangeText;
+
+  /// (iOS Only) Default value:
+  ///
+  /// **'No albums'**
+  late final String? emptyMediaText;
+
+  /// (iOS Only) Default value:
+  ///
+  /// **'Done'**
+  late final String? cropDoneText;
+
+  /// (iOS Only) Default value:
+  ///
+  /// **'Cancel'**
+  late final String? cropCancelText;
+
   late final String? cropTitleText;
 
   HLPickerStyle({
-    this.maxDurationErrorText = DefaultText.maxDurationErrorText,
-    this.maxFileSizeErrorText = DefaultText.maxFileSizeErrorText,
-    this.noAlbumPermissionText = DefaultText.noAlbumPermissionText,
-    this.noCameraPermissionText = DefaultText.noCameraPermissionText,
-    this.maxSelectedAssetsErrorText = DefaultText.maxSelectedAssetsErrorText,
-    this.cancelText = DefaultText.cancelText,
-    this.doneText = DefaultText.doneText,
-    this.tapHereToChangeText = DefaultText.tapHereToChangeText,
-    this.emptyMediaText = DefaultText.emptyMediaText,
-    this.loadingText = DefaultText.loadingText,
-    this.okText = DefaultText.okText,
-    this.cropDoneText = DefaultText.cropDoneText,
-    this.cropCancelText = DefaultText.cropCancelText,
+    this.maxDurationErrorText,
+    this.maxFileSizeErrorText,
+    this.noAlbumPermissionText,
+    this.noCameraPermissionText,
+    this.maxSelectedAssetsErrorText,
+    this.noRecordAudioPermissionText,
+    this.cancelText,
+    this.doneText,
+    this.tapHereToChangeText,
+    this.emptyMediaText,
+    this.loadingText,
+    this.okText,
+    this.cropDoneText,
+    this.cropCancelText,
     this.cropTitleText,
+    this.defaultAlbumName,
   });
 
   HLPickerStyle.fromJson(Map<String, dynamic> json) {
@@ -193,6 +236,7 @@ class HLPickerStyle {
     noAlbumPermissionText = json['noAlbumPermissionText'];
     noCameraPermissionText = json['noCameraPermissionText'];
     maxSelectedAssetsErrorText = json['maxSelectedAssetsErrorText'];
+    noRecordAudioPermissionText = json['noRecordAudioPermissionText'];
     cancelText = json['cancelText'];
     doneText = json['doneText'];
     tapHereToChangeText = json['tapHereToChangeText'];
@@ -202,6 +246,7 @@ class HLPickerStyle {
     cropTitleText = json['cropTitleText'];
     cropDoneText = json['cropDoneText'];
     cropCancelText = json['cropCancelText'];
+    defaultAlbumName = json['defaultAlbumName'];
   }
 
   Map<String, dynamic> toJson() {
@@ -211,6 +256,7 @@ class HLPickerStyle {
     data['noAlbumPermissionText'] = noAlbumPermissionText;
     data['noCameraPermissionText'] = noCameraPermissionText;
     data['maxSelectedAssetsErrorText'] = maxSelectedAssetsErrorText;
+    data['noRecordAudioPermissionText'] = noRecordAudioPermissionText;
     data['cancelText'] = cancelText;
     data['doneText'] = doneText;
     data['tapHereToChangeText'] = tapHereToChangeText;
@@ -220,6 +266,7 @@ class HLPickerStyle {
     data['cropTitleText'] = cropTitleText;
     data['cropDoneText'] = cropDoneText;
     data['cropCancelText'] = cropCancelText;
+    data['defaultAlbumName'] = defaultAlbumName;
     return data;
   }
 }

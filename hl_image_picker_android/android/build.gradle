@@ -48,7 +48,6 @@ android {
     dependencies {
         implementation 'io.github.lucksiege:pictureselector:v3.11.1'
         implementation 'io.github.lucksiege:ucrop:v3.11.1'
-        implementation 'io.github.lucksiege:camerax:v3.11.1'
         implementation 'com.github.bumptech.glide:glide:4.15.1'
         
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
