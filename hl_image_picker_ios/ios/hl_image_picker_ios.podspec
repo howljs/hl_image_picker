@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'hl_image_picker_ios'
-  s.version          = '1.0.1'
+  s.version          = '1.1.1'
   s.summary          = 'iOS implementation of the hl_image_picker plugin.'
   s.description      = <<-DESC
 iOS implementation of the hl_image_picker plugin.

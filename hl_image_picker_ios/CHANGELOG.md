@@ -1,6 +1,10 @@
-## 1.0.2
+## 1.1.1
 
-* Fix error when open camera - (UINavigationController.delegate must be used from main thread only)
+* Update podspec version
+
+## 1.1.0
+
+* Update UI
 
 ## 1.0.1
 
