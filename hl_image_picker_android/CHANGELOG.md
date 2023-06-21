@@ -1,3 +1,7 @@
+## 1.1.2
+
+* Update SDK constraints: ">=2.18.0 <4.0.0"
+
 ## 1.1.1
 
 * Update podspec version
