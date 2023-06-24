@@ -18,21 +18,40 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     
     var configure = TLPhotosPickerConfigure()
     var selectedAssets = [TLPHAsset]()
-    let imagePicker = UIImagePickerController()
+    var isCropOne = false
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         case "openPicker":
             self.arguments = call.arguments as? NSDictionary
-            uiStyle = arguments?["style"] as? [String: Any]
+            uiStyle = arguments?["localized"] as? [String: Any]
+            self.isCropOne = false
             self.result = result
             self.initConfig()
             self.openPicker()
+            
         case "openCamera":
             self.arguments = call.arguments as? NSDictionary
-            uiStyle = arguments?["style"] as? [String: Any]
+            uiStyle = arguments?["localized"] as? [String: Any]
+            self.isCropOne = true
             self.result = result
             self.openCamera()
+            
+        case "openCropper":
+            self.arguments = call.arguments as? NSDictionary
+            uiStyle = arguments?["localized"] as? [String: Any]
+            self.result = result
+            self.isCropOne = true
+            if let imagePath = self.arguments?["imagePath"] as? String,
+               let imagePathEncode = imagePath.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
+               let imageUrl = URL(string: "file://" + imagePathEncode),
+               let imageData = try? Data(contentsOf: imageUrl),
+               let image = UIImage(data: imageData) {
+                self.openCropper(image: image)
+            } else {
+                result(FlutterError(code: "INVALID_PATH", message: "Invalid path", details: nil))
+            }
+            
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -46,16 +65,17 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
                 HLImagePickerUtils.checkCameraPermission { granted in
                     if granted {
                         DispatchQueue.main.async {
-                            self.imagePicker.delegate = self
-                            self.imagePicker.sourceType = .camera
-                            self.imagePicker.allowsEditing = false
+                            let imagePicker = UIImagePickerController()
+                            imagePicker.delegate = self
+                            imagePicker.sourceType = .camera
+                            imagePicker.allowsEditing = false
                             if self.arguments?["cameraType"] as? String == "video" {
-                                self.imagePicker.mediaTypes = [kUTTypeMovie as String]
-                                self.imagePicker.videoQuality = .typeHigh
+                                imagePicker.mediaTypes = [kUTTypeMovie as String]
+                                imagePicker.videoQuality = .typeHigh
                                 let recordVideoMaxSecond = self.arguments?["recordVideoMaxSecond"] as? Int ?? 60
-                                self.imagePicker.videoMaximumDuration = TimeInterval(recordVideoMaxSecond)
+                                imagePicker.videoMaximumDuration = TimeInterval(recordVideoMaxSecond)
                             }
-                            UIApplication.topViewController()?.present(self.imagePicker, animated: true, completion: nil)
+                            UIApplication.topViewController()?.present(imagePicker, animated: true, completion: nil)
                         }
                     } else {
                         self.result!(FlutterError(code: "CAMERA_PERMISSION_DENIED", message: "Camera permission denied", details: nil))
@@ -117,6 +137,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     // MARK: TLPhotoPicker
     
     private func initConfig() {
+        configure = TLPhotosPickerConfigure()
         switch arguments?["mediaType"] as? String {
         case "video":
             configure.mediaType = .video
@@ -144,7 +165,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         configure.cancelTitle = uiStyle?["cancelText"] as? String ?? "Cancel"
         configure.doneTitle = uiStyle?["doneText"] as? String ?? "Done"
         configure.tapHereToChange = uiStyle?["tapHereToChangeText"] as? String ?? "Tap here to change"
-        configure.emptyMessage = uiStyle?["emptyMediaText"] as? String ?? "No albums"
+        configure.emptyMessage = uiStyle?["emptyMediaText"] as? String ?? "No media available"
         
         var newAssets = [TLPHAsset]()
         if let selecteds = arguments?["selectedIds"] as? NSArray {
@@ -173,6 +194,11 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     }
     
     public func dismissPhotoPicker(withTLPHAssets: [TLPHAsset]) {
+        if let minSelectedAssets = arguments?["minSelectedAssets"] as? Int, withTLPHAssets.count < minSelectedAssets {
+            showAlert(message: "minSelectedAssetsErrorText", defaultText: "Need to select at least \(minSelectedAssets)")
+            return;
+        }
+        
         if withTLPHAssets.count == 0 {
             result!([] as NSArray);
             UIApplication.topViewController()?.dismiss(animated: true, completion: nil)
@@ -229,44 +255,44 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     }
     
     public func canSelectAsset(phAsset: PHAsset) -> Bool {
-        let isVideo = phAsset.mediaType == .video
-        let isImage = phAsset.mediaType == .image
-        if !isVideo && !isImage {
-            return false;
-        }
-        
-        let maxDuration = arguments?["maxDuration"] as? Int ?? 0
-        if isVideo && maxDuration > 0 {
-            if phAsset.duration > TimeInterval(maxDuration) {
+        if phAsset.mediaType == .video {
+            if let maxDuration = arguments?["maxDuration"] as? Int, maxDuration > 0 && phAsset.duration > TimeInterval(maxDuration) {
                 showAlert(message: "maxDurationErrorText", defaultText: "Exceeded maximum duration of the video")
+                return false;
+            }
+            
+            if let minDuration = arguments?["minDuration"] as? Int, minDuration >= 0 && phAsset.duration < TimeInterval(minDuration) {
+                showAlert(message: "minDurationErrorText", defaultText: "The video is too short")
                 return false;
             }
         }
         
-        let maxSize = arguments?["maxFileSize"] as? Int64 ?? 0
-        if maxSize == 0 {
-            return true
-        }
-        let imageSize = getAssetSize(asset: phAsset)
-        if imageSize > maxSize {
-            showAlert(message: "maxFileSizeErrorText", defaultText: "Maximum file size exceeded")
+        let assetSize = getAssetSize(asset: phAsset)
+        if let maxSize = arguments?["maxFileSize"] as? Int64, assetSize > maxSize {
+            showAlert(message: "maxFileSizeErrorText", defaultText: "Exceeded maximum file size")
             return false
         }
+        
+        if let minSize = arguments?["minFileSize"] as? Int64, assetSize < minSize {
+            showAlert(message: "minFileSizeErrorText", defaultText: "The file size is too small")
+            return false
+        }
+        
         return true
     }
     
     public func handleNoAlbumPermissions(picker: TLPhotosPickerViewController) {
         picker.dismiss(animated: true) {
-            self.showAlert(message: "noAlbumPermissionText", defaultText: "The album could not be launched. Please allow access to and try again.")
+            self.showAlert(message: "noAlbumPermissionText", defaultText: "No permission to access album")
         }
     }
     
     public func handleNoCameraPermissions(picker: TLPhotosPickerViewController) {
-        showAlert(message: "noCameraPermissionText", defaultText: "The camera could not be started. Please allow camera access and try again.")
+        showAlert(message: "noCameraPermissionText", defaultText: "No permission to access camera")
     }
     
     public func didExceedMaximumNumberOfSelection(picker: TLPhotosPickerViewController) {
-        showAlert(message: "maxSelectedAssetsErrorText", defaultText: "Exceeded maximum amount of assets")
+        showAlert(message: "maxSelectedAssetsErrorText", defaultText: "Exceeded maximum number of selected items")
     }
     
     private func getAssetSize(asset: PHAsset) -> Int64 {
@@ -338,13 +364,17 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     
     // MARK: CropViewController
     private func openCropper(image: UIImage) {
-        let cropViewController = CropViewController(image: image)
+        var cropViewController = CropViewController(croppingStyle: .default, image: image)
+        if let croppingStyle = arguments?["croppingStyle"] as? String, croppingStyle == "circular" {
+            cropViewController = CropViewController(croppingStyle: .circular, image: image)
+        }
         cropViewController.delegate = self
         cropViewController.doneButtonTitle = uiStyle?["cropDoneText"] as? String ?? "Done"
         cropViewController.cancelButtonTitle = uiStyle?["cropCancelText"] as? String ?? "Cancel"
         if let cropTitle = uiStyle?["cropTitleText"] as? String {
             cropViewController.title = cropTitle
         }
+        
         let aspectRatioX = arguments?["ratioX"] as? Double
         let aspectRatioY = arguments?["ratioY"] as? Double
         if aspectRatioX != nil && aspectRatioY != nil {
@@ -354,7 +384,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             cropViewController.aspectRatioLockDimensionSwapEnabled = true
             cropViewController.aspectRatioLockEnabled = true
         }
-        if let aspectRatioPresets = arguments?["aspectRatioPresets"] as? [NSString] {
+        if let aspectRatioPresets = arguments?["aspectRatioPresets"] as? [String] {
             var allowedAspectRatios = [CropViewControllerAspectRatioPreset]()
             for preset in aspectRatioPresets {
                 let aspectRatio = parseAspectRatio(name: preset)
@@ -370,12 +400,17 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     public func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
         let compressQuality = arguments?["compressQuality"] as? Double
         let compressFormat = arguments?["compressFormat"] as? String
-        let croppedImage = HLImagePickerUtils.copyImage(image, quality: compressQuality, format: compressFormat)
+        var targetSize: CGSize?
+        if let cropMaxWidth = arguments?["cropMaxWidth"] as? Int,
+           let cropMaxHeight = arguments?["cropMaxHeight"] as? Int {
+            targetSize = CGSize(width: CGFloat(cropMaxWidth), height: CGFloat(cropMaxHeight))
+        }
+        let croppedImage = HLImagePickerUtils.copyImage(image, quality: compressQuality, format: compressFormat, targetSize: targetSize)
         DispatchQueue.main.async {
             UIApplication.topViewController()?.dismiss(animated: false, completion: {
                 UIApplication.topViewController()?.dismiss(animated: true, completion: {
                     if croppedImage != nil {
-                        if (self.arguments?["cameraType"] as? String) != nil {
+                        if self.isCropOne {
                             self.result!(croppedImage)
                         } else {
                             self.result!([croppedImage])
@@ -396,7 +431,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         }
     }
     
-    private func parseAspectRatio(name: NSString) -> CropViewControllerAspectRatioPreset {
+    private func parseAspectRatio(name: String) -> CropViewControllerAspectRatioPreset {
         if name == "square" {
             return .presetSquare
         } else if name == "3x2" {

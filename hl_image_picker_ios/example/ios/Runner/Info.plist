@@ -53,5 +53,7 @@
 	<string>NSMicrophoneUsageDescription</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>NSPhotoLibraryUsageDescription</string>
+	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
+	<true/>
 </dict>
 </plist>

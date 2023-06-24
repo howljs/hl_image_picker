@@ -4,10 +4,10 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'hl_image_picker_ios'
-  s.version          = '1.1.1'
-  s.summary          = 'iOS implementation of the hl_image_picker plugin.'
+  s.version          = '1.2.0'
+  s.summary          = 'Choose images/videos from the library, crop images, and capture new photos/videos with ease.'
   s.description      = <<-DESC
-iOS implementation of the hl_image_picker plugin.
+Choose images/videos from the library, crop images, and capture new photos/videos with ease.
                        DESC
   s.homepage         = 'https://github.com/howljs/hl_image_picker/tree/main/hl_image_picker_ios'
   s.license          = { :file => '../LICENSE' }

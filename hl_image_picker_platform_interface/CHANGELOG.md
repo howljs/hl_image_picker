@@ -1,3 +1,7 @@
+## 1.2.0
+
+* Update documentation
+
 ## 1.1.2
 
 * Update SDK constraints: ">=2.18.0 <4.0.0"

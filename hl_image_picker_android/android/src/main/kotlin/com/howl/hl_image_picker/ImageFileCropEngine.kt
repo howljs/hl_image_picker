@@ -13,12 +13,13 @@ import com.luck.picture.lib.engine.CropFileEngine
 import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropImageEngine
 
-class ImageFileCropEngine(uCropOptions: UCrop.Options) : CropFileEngine {
-    private val options: UCrop.Options = uCropOptions
-
+class ImageFileCropEngine(private val uCropOptions: UCrop.Options, private val width: Int?, private val height: Int?) : CropFileEngine {
     override fun onStartCrop(fragment: Fragment, srcUri: Uri, destinationUri: Uri, dataSource: ArrayList<String>, requestCode: Int) {
         val uCrop: UCrop = UCrop.of(srcUri, destinationUri, dataSource)
-        uCrop.withOptions(options)
+        uCrop.withOptions(uCropOptions)
+        if(width != null && height != null) {
+            uCrop.withMaxResultSize(width, height)
+        }
         uCrop.setImageEngine(object : UCropImageEngine {
             override fun loadImage(context: Context, url: String, imageView: ImageView) {
                 if (!ImageLoaderUtils.assertValidRequest(context)) {

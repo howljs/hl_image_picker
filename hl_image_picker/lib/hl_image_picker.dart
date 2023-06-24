@@ -1,92 +1,100 @@
+library hl_image_picker;
+
 import 'package:flutter/material.dart';
 import 'package:hl_image_picker_platform_interface/hl_image_picker_platform_interface.dart';
-import 'package:hl_image_picker_platform_interface/hl_image_picker_types.dart';
 
-export 'package:hl_image_picker_platform_interface/hl_image_picker_types.dart'
+export 'package:hl_image_picker_platform_interface/hl_image_picker_platform_interface.dart'
     show
-        HLPickerStyle,
-        HLImagePickerItem,
         MediaType,
+        HLPickerOptions,
+        CameraType,
+        HLCameraOptions,
+        HLPickerItem,
+        HLCropOptions,
         CropAspectRatio,
         CropAspectRatioPreset,
         CompressFormat,
-        CameraType;
+        LocalizedImagePicker,
+        LocalizedImageCropper,
+        CroppingStyle,
+        MaxSizeOutput;
 
 class HLImagePicker {
   @visibleForTesting
   static HLImagePickerPlatform get platform => HLImagePickerPlatform.instance;
 
-  Future<List<HLImagePickerItem>> openPicker({
-    MediaType? mediaType,
-    int? maxSelectedAssets,
-    bool? usedCameraButton,
+  /// Select images or videos from a library
+  ///
+  /// `selectedIds`: A list of string IDs representing the initially selected images or videos from the library. This allows users to pre-select items before opening the picker.
+  ///
+  /// `pickerOptions`: Additional options for the picker: `mediaType`, `maxSelectedAssets`, `maxFileSize`,...
+  ///
+  /// `cropping`: Indicating whether or not cropping is enabled. Just work when `mediaType = MediaType.image` and `maxSelectedAssets = 1`
+  ///
+  /// `cropOptions`: Configuration options for the cropping functionality: `aspectRatio`, `aspectRatioPresets`, `compressQuality`, `compressFormat`
+  ///
+  /// `localized`: Custom text displayed for the plugin
+  ///
+  /// Returns a list of [HLPickerItem]
+  Future<List<HLPickerItem>> openPicker({
     List<String>? selectedIds,
-    int? maxFileSize,
+    HLPickerOptions? pickerOptions,
     bool? cropping,
-    bool? isExportThumbnail,
-    bool? enablePreview,
-    int? numberOfColumn,
-    CropAspectRatio? aspectRatio,
-    List<CropAspectRatioPreset>? aspectRatioPresets,
-    double? compressQuality,
-    CompressFormat? compressFormat,
-    double? thumbnailCompressQuality,
-    CompressFormat? thumbnailCompressFormat,
-    int? recordVideoMaxSecond,
-    int? maxDuration,
-    HLPickerStyle? style,
-    bool? convertHeicToJPG,
-    bool? convertLivePhotosToJPG,
+    HLCropOptions? cropOptions,
+    LocalizedImagePicker? localized,
   }) async {
     return platform.openPicker(
-      mediaType: mediaType,
-      maxSelectedAssets: maxSelectedAssets,
-      usedCameraButton: usedCameraButton,
       selectedIds: selectedIds,
-      maxFileSize: maxFileSize,
       cropping: cropping,
-      isExportThumbnail: isExportThumbnail,
-      enablePreview: enablePreview,
-      numberOfColumn: numberOfColumn,
-      aspectRatio: aspectRatio,
-      aspectRatioPresets: aspectRatioPresets,
-      compressQuality: compressQuality,
-      compressFormat: compressFormat,
-      thumbnailCompressQuality: thumbnailCompressQuality,
-      thumbnailCompressFormat: thumbnailCompressFormat,
-      recordVideoMaxSecond: recordVideoMaxSecond,
-      maxDuration: maxDuration,
-      style: style,
-      convertHeicToJPG: convertHeicToJPG,
-      convertLivePhotosToJPG: convertLivePhotosToJPG,
+      pickerOptions: pickerOptions,
+      cropOptions: cropOptions,
+      localized: localized,
     );
   }
 
-  Future<HLImagePickerItem> openCamera({
-    CameraType? cameraType,
+  /// Take a photo or record a video
+  ///
+  /// `cameraOptions`: Additional options for the camera functionality: `cameraType`, `recordVideoMaxSecond`, `isExportThumbnail`...
+  ///
+  /// `cropping`: Indicating whether or not cropping is enabled
+  ///
+  /// `cropOptions`: Configuration options for the cropping functionality: `aspectRatio`, `aspectRatioPresets`, `compressQuality`, `compressFormat`
+  ///
+  /// `localized`: Custom text displayed for the plugin
+  ///
+  /// Returns a [HLPickerItem] object
+  Future<HLPickerItem> openCamera({
+    HLCameraOptions? cameraOptions,
     bool? cropping,
-    CropAspectRatio? aspectRatio,
-    List<CropAspectRatioPreset>? aspectRatioPresets,
-    double? compressQuality,
-    CompressFormat? compressFormat,
-    int? recordVideoMaxSecond,
-    bool? isExportThumbnail,
-    double? thumbnailCompressQuality,
-    CompressFormat? thumbnailCompressFormat,
-    HLPickerStyle? style,
+    HLCropOptions? cropOptions,
+    LocalizedImageCropper? localized,
   }) async {
     return platform.openCamera(
-      cameraType: cameraType,
+      cameraOptions: cameraOptions,
       cropping: cropping,
-      aspectRatio: aspectRatio,
-      aspectRatioPresets: aspectRatioPresets,
-      compressQuality: compressQuality,
-      compressFormat: compressFormat,
-      recordVideoMaxSecond: recordVideoMaxSecond,
-      isExportThumbnail: isExportThumbnail,
-      thumbnailCompressQuality: thumbnailCompressQuality,
-      thumbnailCompressFormat: thumbnailCompressFormat,
-      style: style,
+      cropOptions: cropOptions,
+      localized: localized,
+    );
+  }
+
+  /// Open image cropper
+  ///
+  /// `imagePath`: Path of the image that needs to be cropped
+  ///
+  /// `cropOptions`: Configuration options for the cropping functionality: `aspectRatio`, `aspectRatioPresets`, `compressQuality`, `compressFormat`
+  ///
+  /// `localized`: Custom text displayed for the plugin
+  ///
+  /// Returns a [HLPickerItem] object
+  Future<HLPickerItem> openCropper(
+    String imagePath, {
+    HLCropOptions? cropOptions,
+    LocalizedImageCropper? localized,
+  }) async {
+    return platform.openCropper(
+      imagePath,
+      cropOptions: cropOptions,
+      localized: localized,
     );
   }
 }

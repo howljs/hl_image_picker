@@ -15,6 +15,8 @@ class CustomLoadingDialog(context: Context,  private val message: String?) : Dia
         setDialogSize()
         val loadingTextView = findViewById<TextView>(R.id.loading_text)
         loadingTextView.text = message ?: "Loading"
+        setCancelable(false)
+        setCanceledOnTouchOutside(false)
     }
 
     private fun setDialogSize() {

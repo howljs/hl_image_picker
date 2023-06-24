@@ -1,18 +1,9 @@
-# hl_image_picker
+# hl_image_picker_platform_interface
 
-A new Flutter plugin project.
+A common platform interface for the [hl_image_picker](https://pub.dev/packages/hl_image_picker) plugin.
 
-## Getting Started
+## Usage
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
-
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-The plugin project was generated without specifying the `--platforms` flag, no platforms are currently supported.
-To add platforms, run `flutter create -t plugin --platforms <platforms> .` in this directory.
-You can also find a detailed instruction on how to add platforms in the `pubspec.yaml` at https://flutter.dev/docs/development/packages-and-plugins/developing-packages#plugin-platforms.
+To implement a new platform-specific implementation of `hl_image_picker`, 
+1. Extend **HLImagePickerPlatform** with an implementation that performs the platform-specific behavior.
+2. When you register your plugin, set the default HLImagePickerPlatform by calling HLImagePickerPlatform.instance = HLImagePickerPlatform().

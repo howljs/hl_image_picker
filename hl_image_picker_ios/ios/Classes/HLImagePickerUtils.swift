@@ -21,10 +21,10 @@ class HLImagePickerUtils {
             let randomId = randomString(length: 10)
             if "png" == format {
                 data = thumbnailImage.pngData()
-                fileName = "media_picker_\(randomId).png"
+                fileName = "hl_image_picker_\(randomId).png"
             } else {
                 data = thumbnailImage.jpegData(compressionQuality: CGFloat(quality ?? 0.9))
-                fileName = "media_picker_\(randomId).jpg"
+                fileName = "hl_image_picker_\(randomId).jpg"
             }
             
             guard let data = data else {
@@ -56,16 +56,20 @@ class HLImagePickerUtils {
         return 0
     }
     
-    static func copyImage(_ image: UIImage, quality: Double? = nil, format: String? = nil) -> [String : Any]? {
+    static func copyImage(_ image: UIImage, quality: Double? = nil, format: String? = nil, targetSize: CGSize? = nil) -> [String : Any]? {
         var data: Data?
         var fileName: String
         let randomId = randomString(length: 10)
+        var newImage = image
+        if let targetSize = targetSize {
+            newImage = resizeImage(image, targetSize: targetSize)
+        }
         if "png" == format {
-            data = image.pngData()
-            fileName = "media_picker_\(randomId).png"
+            data = newImage.pngData()
+            fileName = "hl_image_picker_\(randomId).png"
         } else {
-            data = image.jpegData(compressionQuality: CGFloat(quality ?? 0.9))
-            fileName = "media_picker_\(randomId).jpg"
+            data = newImage.jpegData(compressionQuality: CGFloat(quality ?? 0.9))
+            fileName = "hl_image_picker_\(randomId).jpg"
         }
         
         guard let data = data else {
@@ -83,8 +87,8 @@ class HLImagePickerUtils {
                 "name": fileName,
                 "mimeType": "image/jpeg",
                 "size": getFileSize(at: fileURL.path),
-                "height": Int(image.size.width) as NSNumber,
-                "width": Int(image.size.height) as NSNumber,
+                "height": Int(newImage.size.width) as NSNumber,
+                "width": Int(newImage.size.height) as NSNumber,
                 "type": "image",
             ] as [String : Any]
             return media
@@ -158,5 +162,21 @@ class HLImagePickerUtils {
         options.version = .current
         options.resizeMode = .exact
         PHCachingImageManager().requestImageData(for: asset, options: options, resultHandler: resultHandler)
+    }
+    
+    static func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
+        let size = image.size
+        let widthRatio = targetSize.width == 0 ? 1 : targetSize.width / size.width
+        let heightRatio = targetSize.height == 0 ? 1 : targetSize.height / size.height
+        let scaleFactor = min(widthRatio, heightRatio)
+        
+        let scaledSize = CGSize(width: size.width * scaleFactor, height: size.height * scaleFactor)
+        let renderer = UIGraphicsImageRenderer(size: scaledSize)
+        
+        let resizedImage = renderer.image { context in
+            image.draw(in: CGRect(origin: .zero, size: scaledSize))
+        }
+        
+        return resizedImage
     }
 }
