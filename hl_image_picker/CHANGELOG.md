@@ -1,3 +1,7 @@
+## 1.2.1
+
+- Fix duplicate alert when album permission is denied (iOS only)
+
 ## 1.2.0
 
 - Update documentation

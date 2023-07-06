@@ -85,7 +85,6 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         } else {
             result!(FlutterError(code: "CAMERA_NOT_AVAILABLE", message: "Camera is not available", details: nil))
         }
-        
     }
     
     public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
@@ -454,16 +453,14 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
 
 extension UIApplication {
     class func topViewController(base: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
-        if let nav = base as? UINavigationController {
-            return topViewController(base: nav.visibleViewController)
-        }
-        if let tab = base as? UITabBarController {
-            if let selected = tab.selectedViewController {
-                return topViewController(base: selected)
-            }
-        }
         if let presented = base?.presentedViewController {
             return topViewController(base: presented)
+        }
+        if let alert = base as? UIAlertController {
+            if let navigationController = alert.presentingViewController as? UINavigationController {
+                return navigationController.viewControllers.last
+            }
+            return alert.presentingViewController
         }
         return base
     }
