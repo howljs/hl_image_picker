@@ -1,3 +1,7 @@
+## 1.2.1
+
+- Fix deselecting all previously selected images
+
 ## 1.2.0
 
 - Update documentation

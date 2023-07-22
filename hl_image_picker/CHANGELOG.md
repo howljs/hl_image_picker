@@ -1,3 +1,7 @@
+## 1.2.2
+
+- Fix deselecting all previously selected images (Android only)
+
 ## 1.2.1
 
 - Fix duplicate alert when album permission is denied (iOS only)

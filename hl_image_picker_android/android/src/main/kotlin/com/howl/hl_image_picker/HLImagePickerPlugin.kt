@@ -8,12 +8,16 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Bundle
 import android.text.TextUtils
+import android.view.View
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.luck.picture.lib.PictureSelectorFragment
+import com.luck.picture.lib.basic.IBridgeViewLifecycle
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.InjectResourceSource
 import com.luck.picture.lib.config.PictureMimeType
@@ -149,7 +153,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
         val recordVideoMaxSecond = flutterCall?.argument<Int>("recordVideoMaxSecond") ?: 60
         val maxDuration = flutterCall?.argument<Int>("maxDuration") ?: 0
         val minDuration = flutterCall?.argument<Int>("minDuration") ?: 0
-
+        var shouldReturnOnDestroy = true
         PictureSelector.create(currentActivity)
                 .openGallery(mediaType)
                 .setMaxSelectNum(maxSelectedAssets)
@@ -181,9 +185,20 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                 .setDefaultAlbumName(uiStyle.getOrElse("defaultAlbumName") { "Recents" } as String)
                 .setSelectorUIStyle(handleUIStyle())
                 .isEmptyResultReturn(true)
+                .setAttachViewLifecycle(object: IBridgeViewLifecycle {
+                    override fun onViewCreated(fragment: Fragment?, view: View?, savedInstanceState: Bundle?) {}
+
+                    override fun onDestroy(fragment: Fragment?) {
+                        if(fragment is PictureSelectorFragment && shouldReturnOnDestroy) {
+                            val mediaList: List<Map<String, Any>> = listOf()
+                            mediaPickerResult?.success(mediaList)
+                        }
+                    }
+                })
                 .setInjectLayoutResourceListener(InjectLayoutResourceListener())
                 .forResult(object : OnResultCallbackListener<LocalMedia?> {
                     override fun onResult(result: ArrayList<LocalMedia?>?) {
+                        shouldReturnOnDestroy = false
                         val mediaList: MutableList<Map<String, Any>> = mutableListOf()
                         result?.forEach { media ->
                             if (media != null) {
@@ -193,7 +208,9 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                         mediaPickerResult?.success(mediaList)
                     }
 
-                    override fun onCancel() {}
+                    override fun onCancel() {
+                        shouldReturnOnDestroy = false
+                    }
                 })
     }
 
