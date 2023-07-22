@@ -17,7 +17,7 @@ Simplify media selection, cropping, and camera functionality in your Flutter app
   <img
       src="https://github.com/howljs/hl_image_picker/blob/main/__assets__/ios_picker_demo.gif?raw=true"
       alt="Picker iOS"
-      style="max-width: 100%; max-height: 750px"
+      width="160"
     />
 </p>
 
@@ -148,36 +148,9 @@ _openCropper_() async {
 | cropOptions | Configuration options for the cropping functionality | [HLCropOptions](#hlcropoptions)                 |
 | localized   | Custom text displayed for the plugin                 | [LocalizedImageCropper](#localizedimagecropper) |
 
-<div style="display: flex; gap: 10px;">
-  <div style="flex: 1 1 auto">
-    <img
-      src="https://github.com/howljs/hl_image_picker/blob/main/__assets__/ios_crop_square.png?raw=true"
-      alt="Picker iOS"
-      style="max-width: 100%; max-height: 1000px"
-    />
-  </div>
-  <div style="flex: 1 1 auto">
-    <img
-      src="https://github.com/howljs/hl_image_picker/blob/main/__assets__/ios_crop_circular.png?raw=true"
-      alt="Picker iOS Circular"
-      style="max-width: 100%; max-height: 1000px"
-    />
-  </div>
-  <div style="flex: 1 1 auto">
-    <img
-      src="https://github.com/howljs/hl_image_picker/blob/main/__assets__/android_crop_square.png?raw=true"
-      alt="Picker Android"
-      style="max-width: 100%; max-height: 1000px"
-    />
-  </div>
-  <div style="flex: 1 1 auto">
-    <img
-      src="https://github.com/howljs/hl_image_picker/blob/main/__assets__/android_crop_circular.png?raw=true"
-      alt="Picker Android Circular"
-      style="max-width: 100%; max-height: 1000px"
-    />
-  </div>
-</div>
+| Normal                                                                                                              | Circular                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://github.com/howljs/hl_image_picker/blob/main/__assets__/ios_crop_square.png?raw=true" width="160"> | <img src="https://github.com/howljs/hl_image_picker/blob/main/__assets__/ios_crop_circular.png?raw=true" width="160"> |
 
 ---
 
