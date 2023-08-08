@@ -1,3 +1,7 @@
+## 1.2.5
+
+- Dismiss camera preview before open cropper (iOS)
+
 ## 1.2.4
 
 - Update README.md

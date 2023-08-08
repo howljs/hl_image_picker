@@ -120,7 +120,9 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             let isCropEnabled = arguments?["cropping"] as? Bool ?? false
             if let image = info[.originalImage] as? UIImage {
                 if isCropEnabled {
-                    openCropper(image: image)
+                    picker.dismiss(animated: false, completion: {
+                        self.openCropper(image: image)
+                    })
                 } else {
                     let imageData = HLImagePickerUtils.copyImage(image)
                     result!(imageData)
