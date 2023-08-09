@@ -1,3 +1,7 @@
+## 1.2.3
+
+- Fix the issue of not returning image when cropper screen is closed.
+
 ## 1.2.2
 
 - Dismiss camera preview before open cropper

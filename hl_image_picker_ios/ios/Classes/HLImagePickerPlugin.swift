@@ -120,9 +120,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             let isCropEnabled = arguments?["cropping"] as? Bool ?? false
             if let image = info[.originalImage] as? UIImage {
                 if isCropEnabled {
-                    picker.dismiss(animated: false, completion: {
-                        self.openCropper(image: image)
-                    })
+                    openCropper(image: image)
                 } else {
                     let imageData = HLImagePickerUtils.copyImage(image)
                     result!(imageData)
@@ -408,6 +406,24 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         }
         let croppedImage = HLImagePickerUtils.copyImage(image, quality: compressQuality, format: compressFormat, targetSize: targetSize)
         DispatchQueue.main.async {
+            // UIApplication.topViewController()?.dismiss(animated: self.isCropOne, completion: {
+            //     if self.isCropOne {
+            //         if croppedImage != nil {
+            //             self.result!(croppedImage)
+            //         } else {
+            //             self.result!(FlutterError(code: "CROP_ERROR", message: "Crop error", details: nil))
+            //         }
+            //     } else {
+            //         UIApplication.topViewController()?.dismiss(animated: true, completion: {
+            //             if croppedImage != nil {
+            //                 self.result!([croppedImage])
+            //             } else {
+            //                 self.result!(FlutterError(code: "CROP_ERROR", message: "Crop error", details: nil))
+            //             }
+            //         })
+            //     }
+                
+            // })
             UIApplication.topViewController()?.dismiss(animated: false, completion: {
                 UIApplication.topViewController()?.dismiss(animated: true, completion: {
                     if croppedImage != nil {
@@ -427,7 +443,11 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     public func cropViewController(_ cropViewController: CropViewController, didFinishCancelled cancelled: Bool) {
         if cancelled {
             DispatchQueue.main.async {
-                UIApplication.topViewController()?.dismiss(animated: false, completion: nil)
+                UIApplication.topViewController()?.dismiss(animated: false, completion: {
+                    if self.isCropOne {
+                        UIApplication.topViewController()?.dismiss(animated: true, completion: nil)
+                    }
+                })
             }
         }
     }

@@ -3,7 +3,7 @@ description: Choose images/videos from the library, crop images, and capture new
 repository: https://github.com/howljs/hl_image_picker/tree/main/hl_image_picker
 issue_tracker: https://github.com/howljs/hl_image_picker/issues
 
-version: 1.2.5
+version: 1.2.6
 
 environment:
   sdk: ">=2.18.0 <4.0.0"
@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   hl_image_picker_platform_interface: ^1.2.0
-  hl_image_picker_ios: ^1.2.2
+  hl_image_picker_ios: ^1.2.3
   hl_image_picker_android: ^1.2.1
 
 dev_dependencies:
