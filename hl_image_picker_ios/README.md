@@ -161,8 +161,8 @@ _openCropper_() async {
 | mediaType                | Type of media you want to select: `MediaType.image`, `MediaType.video`,`MediaType.all`.   | MediaType.all      |
 | maxSelectedAssets        | The maximum number of items that can be selected.                                         | 1                  |
 | minSelectedAssets        | The minimum number of items that must be selected.                                        |                    |
-| maxFileSize              | The maximum allowed file size for selected items.                                         |                    |
-| minFileSize              | The minimum allowed file size for selected items.                                         |                    |
+| maxFileSize              | The maximum allowed file size (in KB) for selected items.                                 |                    |
+| minFileSize              | The minimum allowed file size (in KB) for selected items.                                 |                    |
 | enablePreview            | Enables or disables the preview feature. (**Press** on Android and **Long Press** on iOS) | false              |
 | convertHeicToJPG         | Converts HEIC format images to JPEG format when selected.                                 | false              |
 | convertLivePhotosToJPG   | Converts Live Photos to JPEG format when selected.                                        | true               |
