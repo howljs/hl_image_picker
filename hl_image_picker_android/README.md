@@ -174,6 +174,8 @@ _openCropper_() async {
 | minDuration              | The minimum duration (in seconds) for selected videos.                                  |                    |
 | numberOfColumn           | The number of items displayed per row in the picker list.                               | 3                  |
 | usedCameraButton         | Determines whether to show the camera button in the picker list.                        | true               |
+| usedCameraButton         | Determines whether to show the camera button in the picker list.                        | true               |
+| isGif                    | Enable gif selection                                                                    | false              |
 
 ### HLCropOptions
 

@@ -1,3 +1,8 @@
+## 1.2.1
+
+* Change data type of maxFileSize and minFileSize from int to double
+* Support gif selection
+
 ## 1.2.0
 
 * Update documentation

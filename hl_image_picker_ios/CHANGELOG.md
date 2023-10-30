@@ -1,3 +1,8 @@
+## 1.2.4
+
+- fix: maxFileSize and minFileSize are not working
+- feat: support gif selection
+
 ## 1.2.3
 
 - Fix the issue of not returning image when cropper screen is closed.

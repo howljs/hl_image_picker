@@ -48,7 +48,7 @@ class HLImagePickerUtils {
         do {
             let fileAttributes = try FileManager.default.attributesOfItem(atPath: filePath)
             if let fileSize = fileAttributes[FileAttributeKey.size] as? UInt64 {
-                return fileSize
+                return fileSize / 1024
             }
         } catch {
             print("Error getting file size: \(error)")

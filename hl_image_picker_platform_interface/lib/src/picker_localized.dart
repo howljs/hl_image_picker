@@ -140,6 +140,12 @@ class LocalizedImagePicker extends LocalizedImageCropper {
   /// **'No media available'**
   late final String? emptyMediaText;
 
+  /// The text displayed when no media is available.
+  ///
+  /// Default:
+  /// **'File type is not supported'**
+  late final String? gifErrorText;
+
   LocalizedImagePicker({
     this.maxDurationErrorText,
     this.minDurationErrorText,
@@ -157,6 +163,7 @@ class LocalizedImagePicker extends LocalizedImageCropper {
     this.cancelText,
     this.tapHereToChangeText,
     this.emptyMediaText,
+    this.gifErrorText,
     super.cropDoneText,
     super.cropCancelText,
     super.cropTitleText,
@@ -184,6 +191,7 @@ class LocalizedImagePicker extends LocalizedImageCropper {
     data['cropDoneText'] = cropDoneText;
     data['cropCancelText'] = cropCancelText;
     data['defaultAlbumName'] = defaultAlbumName;
+    data['gifErrorText'] = gifErrorText;
     return data;
   }
 }

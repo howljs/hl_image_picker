@@ -174,6 +174,7 @@ _openCropper_() async {
 | minDuration              | The minimum duration (in seconds) for selected videos.                                    |                    |
 | numberOfColumn           | The number of items displayed per row in the picker list.                                 | 3                  |
 | usedCameraButton         | Determines whether to show the camera button in the picker list.                          | true               |
+| isGif                    | Support gif selection.                                                                    | false              |
 
 ### HLCropOptions
 
@@ -224,6 +225,7 @@ _openCropper_() async {
 | maxSelectedAssetsErrorText  | The error message displayed when the maximum number of items is exceeded.              | Exceeded maximum number of selected items   |
 | minSelectedAssetsErrorText  | The error message displayed when the minimum number of items is not met.               | Need to select at least {minSelectedAssets} |
 | noRecordAudioPermissionText | The error message displayed when the app doesn't have permission to record audio.      | No permission to record audio               |
+| gifErrorText                | The error message displayed when the selected file is gif and `isGif=false` (iOS Only) | File type is not supported                  |
 | doneText                    | The text displayed on the "Done" button.                                               | Done                                        |
 | cancelText                  | The text displayed on the "Cancel" button.                                             | Cancel                                      |
 | loadingText                 | The text displayed when the picker is in a loading state.                              | Loading                                     |

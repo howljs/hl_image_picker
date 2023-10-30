@@ -1,3 +1,7 @@
+## 1.2.2
+
+- Support gif selection
+
 ## 1.2.1
 
 - Fix deselecting all previously selected images

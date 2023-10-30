@@ -148,11 +148,12 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
         val minSelectedAssets = flutterCall?.argument<Int>("minSelectedAssets") ?: 0
         val selectionMode = if (maxSelectedAssets == 1) SelectModeConfig.SINGLE else SelectModeConfig.MULTIPLE
         val usedCameraButton = flutterCall?.argument<Boolean>("usedCameraButton") ?: true
-        val maxFileSize = flutterCall?.argument<Int>("maxFileSize") ?: 0
-        val minFileSize = flutterCall?.argument<Int>("minFileSize") ?: 0
+        val maxFileSize = flutterCall?.argument<Double>("maxFileSize") ?: 0.0
+        val minFileSize = flutterCall?.argument<Double>("minFileSize") ?: 0.0
         val recordVideoMaxSecond = flutterCall?.argument<Int>("recordVideoMaxSecond") ?: 60
         val maxDuration = flutterCall?.argument<Int>("maxDuration") ?: 0
         val minDuration = flutterCall?.argument<Int>("minDuration") ?: 0
+        val isGif = flutterCall?.argument<Boolean>("isGif") ?: false
         var shouldReturnOnDestroy = true
         PictureSelector.create(currentActivity)
                 .openGallery(mediaType)
@@ -165,6 +166,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                 .isPreviewAudio(enablePreview)
                 .setSelectedData(selectedAssets)
                 .isWithSelectVideoImage(true)
+                .isGif(isGif)
                 .setMaxVideoSelectNum(maxSelectedAssets)
                 .setSelectMaxFileSize(maxFileSize.toLong())
                 .setSelectMinFileSize(minFileSize.toLong())

@@ -1,6 +1,26 @@
 import 'constants.dart';
 
 class HLPickerOptions {
+  HLPickerOptions({
+    this.numberOfColumn,
+    this.usedCameraButton,
+    this.mediaType,
+    this.maxSelectedAssets,
+    this.minSelectedAssets,
+    this.maxFileSize,
+    this.minFileSize,
+    this.enablePreview,
+    this.convertHeicToJPG,
+    this.convertLivePhotosToJPG,
+    this.isExportThumbnail,
+    this.recordVideoMaxSecond,
+    this.thumbnailCompressQuality,
+    this.thumbnailCompressFormat,
+    this.maxDuration,
+    this.minDuration,
+    this.isGif,
+  });
+
   /// Type of media you want to select: [MediaType.image], [MediaType.video], [MediaType.all].
   ///
   /// Default: [MediaType.all]
@@ -15,10 +35,10 @@ class HLPickerOptions {
   int? minSelectedAssets;
 
   /// The maximum allowed file size for selected items.
-  int? maxFileSize;
+  double? maxFileSize;
 
   /// The minimum allowed file size for selected items.
-  int? minFileSize;
+  double? minFileSize;
 
   /// Enables or disables the preview feature.
   ///
@@ -73,24 +93,7 @@ class HLPickerOptions {
   /// Default value: `true`
   late final bool? usedCameraButton;
 
-  HLPickerOptions({
-    this.numberOfColumn,
-    this.usedCameraButton,
-    this.mediaType,
-    this.maxSelectedAssets,
-    this.minSelectedAssets,
-    this.maxFileSize,
-    this.minFileSize,
-    this.enablePreview,
-    this.convertHeicToJPG,
-    this.convertLivePhotosToJPG,
-    this.isExportThumbnail,
-    this.recordVideoMaxSecond,
-    this.thumbnailCompressQuality,
-    this.thumbnailCompressFormat,
-    this.maxDuration,
-    this.minDuration,
-  });
+  bool? isGif;
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
@@ -110,6 +113,7 @@ class HLPickerOptions {
     result['thumbnailCompressQuality'] = thumbnailCompressQuality;
     result['numberOfColumn'] = numberOfColumn;
     result['usedCameraButton'] = usedCameraButton;
+    result['isGif'] = isGif;
     return result;
   }
 }

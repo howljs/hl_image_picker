@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
           maxSelectedAssets: _isCroppingEnabled ? 1 : _count,
           usedCameraButton: _usedCameraButton,
           numberOfColumn: _numberOfColumn,
+          isGif: true,
         ),
         cropOptions: HLCropOptions(
           aspectRatio: _aspectRatio,

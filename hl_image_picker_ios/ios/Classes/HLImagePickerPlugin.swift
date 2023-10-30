@@ -266,13 +266,19 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             }
         }
         
+        let isGifSupported = arguments?["isGif"] as? Bool ?? false
+        if !isGifSupported && phAsset.playbackStyle == .imageAnimated {
+            showAlert(message: "gifErrorText", defaultText: "File type is not supported")
+            return false
+        }
+        
         let assetSize = getAssetSize(asset: phAsset)
-        if let maxSize = arguments?["maxFileSize"] as? Int64, assetSize > maxSize {
+        if let maxSize = arguments?["maxFileSize"] as? Double, assetSize > maxSize {
             showAlert(message: "maxFileSizeErrorText", defaultText: "Exceeded maximum file size")
             return false
         }
         
-        if let minSize = arguments?["minFileSize"] as? Int64, assetSize < minSize {
+        if let minSize = arguments?["minFileSize"] as? Double, assetSize < minSize {
             showAlert(message: "minFileSizeErrorText", defaultText: "The file size is too small")
             return false
         }
@@ -294,14 +300,14 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         showAlert(message: "maxSelectedAssetsErrorText", defaultText: "Exceeded maximum number of selected items")
     }
     
-    private func getAssetSize(asset: PHAsset) -> Int64 {
+    private func getAssetSize(asset: PHAsset) -> Double {
         let resources = PHAssetResource.assetResources(for: asset)
         guard let resource = resources.first,
               let unsignedInt64 = resource.value(forKey: "fileSize") as? CLong else {
             return 0
         }
         let sizeOnDisk = Int64(bitPattern: UInt64(unsignedInt64))
-        return sizeOnDisk
+        return Double(sizeOnDisk / 1024)
     }
     
     private func buildResponse(path: URL, withType type: String, withAsset asset: TLPHAsset ) -> [String : Any] {
@@ -317,7 +323,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         if phAsset?.mediaType == .video {
             media["type"] = "video"
             asset.videoSize { mediaSize in
-                media["size"] = mediaSize
+                media["size"] = mediaSize / 1024
             }
             let isGenerateThumbnail = arguments?["isExportThumbnail"] as? Bool ?? false
             if isGenerateThumbnail {
@@ -329,7 +335,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         } else {
             media["type"] = "image"
             asset.photoSize { mediaSize in
-                media["size"] = mediaSize
+                media["size"] = mediaSize / 1024
             }
         }
         return media
@@ -406,24 +412,6 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         }
         let croppedImage = HLImagePickerUtils.copyImage(image, quality: compressQuality, format: compressFormat, targetSize: targetSize)
         DispatchQueue.main.async {
-            // UIApplication.topViewController()?.dismiss(animated: self.isCropOne, completion: {
-            //     if self.isCropOne {
-            //         if croppedImage != nil {
-            //             self.result!(croppedImage)
-            //         } else {
-            //             self.result!(FlutterError(code: "CROP_ERROR", message: "Crop error", details: nil))
-            //         }
-            //     } else {
-            //         UIApplication.topViewController()?.dismiss(animated: true, completion: {
-            //             if croppedImage != nil {
-            //                 self.result!([croppedImage])
-            //             } else {
-            //                 self.result!(FlutterError(code: "CROP_ERROR", message: "Crop error", details: nil))
-            //             }
-            //         })
-            //     }
-                
-            // })
             UIApplication.topViewController()?.dismiss(animated: false, completion: {
                 UIApplication.topViewController()?.dismiss(animated: true, completion: {
                     if croppedImage != nil {

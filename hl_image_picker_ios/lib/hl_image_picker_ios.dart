@@ -99,6 +99,7 @@ class HLImagePickerIOS extends HLImagePickerPlatform {
       'minFileSize': pickerOptions?.minFileSize,
       'usedCameraButton': pickerOptions?.usedCameraButton,
       'numberOfColumn': pickerOptions?.numberOfColumn,
+      'isGif': pickerOptions?.isGif,
       'cropMaxWidth': cropWidth,
       'cropMaxHeight': cropHeight,
       'localized': localized?.toMap(),

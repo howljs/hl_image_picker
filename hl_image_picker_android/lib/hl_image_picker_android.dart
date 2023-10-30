@@ -101,6 +101,7 @@ class HLImagePickerAndroid extends HLImagePickerPlatform {
       'usedCameraButton': pickerOptions?.usedCameraButton,
       'cropMaxWidth': cropWidth,
       'cropMaxHeight': cropHeight,
+      'isGif': pickerOptions?.isGif,
       'localized': localized?.toMap(),
     });
     List<HLPickerItem> selectedItems = [];
