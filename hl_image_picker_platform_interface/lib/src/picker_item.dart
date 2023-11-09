@@ -1,16 +1,5 @@
 class HLPickerItem {
-  late final String path;
-  late final String id;
-  late final String name;
-  late final String mimeType;
-  late final int size;
-  late final int width;
-  late final int height;
-  late final String type;
-  late final double? duration;
-  late final String? thumbnail;
-
-  HLPickerItem({
+  const HLPickerItem({
     required this.path,
     required this.id,
     required this.name,
@@ -23,18 +12,29 @@ class HLPickerItem {
     this.thumbnail,
   });
 
-  HLPickerItem.fromMap(Map<dynamic, dynamic> json) {
-    path = json['path'];
-    id = json['id'];
-    name = json['name'];
-    mimeType = json['mimeType'];
-    size = json['size'];
-    width = json['width'];
-    height = json['height'];
-    duration = json['duration'];
-    thumbnail = json['thumbnail'];
-    type = json['type'];
-  }
+  final String path;
+  final String id;
+  final String name;
+  final String mimeType;
+  final int size;
+  final int width;
+  final int height;
+  final String type;
+  final double? duration;
+  final String? thumbnail;
+
+  factory HLPickerItem.fromMap(Map<dynamic, dynamic> json) => HLPickerItem(
+        path: json['path'],
+        id: json['id'],
+        name: json['name'],
+        mimeType: json['mimeType'],
+        size: json['size'],
+        width: json['width'],
+        height: json['height'],
+        duration: json['duration'],
+        thumbnail: json['thumbnail'],
+        type: json['type'],
+      );
 
   Map<dynamic, dynamic> toMap() {
     final data = <dynamic, dynamic>{};

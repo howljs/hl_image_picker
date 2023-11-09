@@ -50,6 +50,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import java.io.File
+import java.net.URLConnection
 
 
 /** HLImagePickerPlugin */
@@ -107,11 +108,17 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
             else -> SelectMimeType.ofImage()
         }
         val recordVideoMaxSecond = flutterCall?.argument<Int>("recordVideoMaxSecond") ?: 60
+        val maxWidth = flutterCall?.argument<Int>("cameraMaxWidth")
+        val maxHeight = flutterCall?.argument<Int>("cameraMaxHeight")
+        val compressQuality = flutterCall?.argument<Double>("cameraCompressQuality")
+        val compressFormat = flutterCall?.argument<String>("cameraCompressFormat")
+
         PictureSelector.create(currentActivity)
                 .openCamera(cameraType)
                 .setCropEngine(getCropFileEngine())
                 .setVideoThumbnailListener(getVideoThumbnail())
                 .setRecordVideoMaxSecond(recordVideoMaxSecond)
+                .setCompressEngine(getCompressFileEngine(compressQuality, compressFormat, maxWidth, maxHeight))
                 .setPermissionDeniedListener { fragment, permissionArray, _, _ ->
                     handlePermissionDenied(fragment, permissionArray)
                 }
@@ -154,6 +161,12 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
         val maxDuration = flutterCall?.argument<Int>("maxDuration") ?: 0
         val minDuration = flutterCall?.argument<Int>("minDuration") ?: 0
         val isGif = flutterCall?.argument<Boolean>("isGif") ?: false
+
+        val maxWidth = flutterCall?.argument<Int>("maxWidth")
+        val maxHeight = flutterCall?.argument<Int>("maxHeight")
+        val pickerCompressQuality = flutterCall?.argument<Double>("compressQuality")
+        val pickerCompressFormat = flutterCall?.argument<String>("compressFormat")
+
         var shouldReturnOnDestroy = true
         PictureSelector.create(currentActivity)
                 .openGallery(mediaType)
@@ -165,6 +178,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                 .isPreviewVideo(enablePreview)
                 .isPreviewAudio(enablePreview)
                 .setSelectedData(selectedAssets)
+                .setCompressEngine(getCompressFileEngine(pickerCompressQuality, pickerCompressFormat, maxWidth, maxHeight))
                 .isWithSelectVideoImage(true)
                 .isGif(isGif)
                 .setMaxVideoSelectNum(maxSelectedAssets)
@@ -337,15 +351,22 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
     }
 
     private fun buildResponse(media: LocalMedia): Map<String, Any> {
-        if (media.width == 0 || media.height == 0) {
+        if (media.width == 0 || media.height == 0 || media.isCompressed) {
             if (PictureMimeType.isHasImage(media.mimeType)) {
-                val imageExtraInfo = MediaUtils.getImageSize(applicationContext, media.path)
+                val imageExtraInfo = MediaUtils.getImageSize(applicationContext, media.compressPath ?: media.realPath)
                 media.width = imageExtraInfo.width
                 media.height = imageExtraInfo.height
             } else if (PictureMimeType.isHasVideo(media.mimeType)) {
-                val imageExtraInfo = MediaUtils.getVideoSize(applicationContext, media.path)
+                val imageExtraInfo = MediaUtils.getVideoSize(applicationContext, media.compressPath ?: media.realPath)
                 media.width = imageExtraInfo.width
                 media.height = imageExtraInfo.height
+            }
+            if (media.isCompressed) {
+                val file = File(media.compressPath)
+                media.fileName = file.name
+                media.size = file.length()
+                val fileNameMap = URLConnection.getFileNameMap()
+                media.mimeType = fileNameMap.getContentTypeFor(file.name)
             }
         }
 
@@ -376,7 +397,6 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
         return item
     }
 
-
     private fun openCropper() {
         val imagePath = flutterCall?.argument<String>("imagePath") ?: return
         val inputUri = if (PictureMimeType.isContent(imagePath)) Uri.parse(imagePath) else Uri.fromFile(File(imagePath))
@@ -385,8 +405,8 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
             mediaPickerResult?.error("CROPPER_ERROR", "Can't get output path", null)
             return
         }
-        val compressQuality = flutterCall?.argument<Double>("compressQuality") ?: 0.9
-        val compressFormatStr = flutterCall?.argument<String>("compressFormat")
+        val compressQuality = flutterCall?.argument<Double>("cropCompressQuality") ?: 0.9
+        val compressFormatStr = flutterCall?.argument<String>("cropCompressFormat")
         val compressFormat = if ("png" == compressFormatStr) Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.JPEG
         val fileExt = if ("png" == compressFormatStr) ".png" else ".jpg"
         val destinationUri = Uri.fromFile(
@@ -494,6 +514,13 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
         return customFile.absolutePath + File.separator
     }
 
+    private fun getCompressFileEngine(compressQuality: Double?, compressFormat: String?, maxWidth: Int?, maxHeight: Int?): ImageFileCompressEngine? {
+        if(compressQuality == null && compressFormat == null && maxWidth == null && maxHeight == null) {
+            return null
+        }
+        return ImageFileCompressEngine(compressQuality, compressFormat, maxWidth ?: 0, maxHeight ?: 0)
+    }
+
     private fun getCropFileEngine(): ImageFileCropEngine? {
         val isCropEnabled = flutterCall?.argument<Boolean>("cropping") ?: false
         val maxSelectedAssets = flutterCall?.argument<Int>("maxSelectedAssets") ?: 1
@@ -516,9 +543,9 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
             }
             options.setAspectRatioOptions(0, *aspectRatioList.toTypedArray())
         }
-        val compressQuality = flutterCall?.argument<Double>("compressQuality") ?: 0.9
+        val compressQuality = flutterCall?.argument<Double>("cropCompressQuality") ?: 0.9
         options.setCompressionQuality((compressQuality * 100).toInt())
-        val compressFormat = flutterCall?.argument<String>("compressFormat")
+        val compressFormat = flutterCall?.argument<String>("cropCompressFormat")
         options.setCompressionFormat(if ("png" == compressFormat) Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.JPEG)
         val outputPath = getSandboxPath()
         if (outputPath != null) {

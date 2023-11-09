@@ -175,6 +175,9 @@ _openCropper_() async {
 | numberOfColumn           | The number of items displayed per row in the picker list.                                 | 3                  |
 | usedCameraButton         | Determines whether to show the camera button in the picker list.                          | true               |
 | isGif                    | Support gif selection.                                                                    | false              |
+| compressQuality          | Compress images with custom quality                                                       |                    |
+| compressFormat           | The image format for compressed images                                                    | CompressFormat.jpg |
+| maxSizeOutput            | Sets the maximum width and maximum height for selected images.                            |                    |
 
 ### HLCropOptions
 
@@ -196,6 +199,9 @@ _openCropper_() async {
 | isExportThumbnail        | Determines whether to export thumbnail for recorded video.                           | false              |
 | thumbnailCompressQuality | The compression quality (0.1-1) for exported thumbnail.                              | 0.9                |
 | thumbnailCompressFormat  | The image format for exported thumbnail: `CompressFormat.jpg`, `CompressFormat.png`. | CompressFormat.jpg |
+| compressQuality          | Compress images with custom quality                                                  |                    |
+| compressFormat           | The image format for compressed images                                               | CompressFormat.jpg |
+| maxSizeOutput            | Sets the maximum width and maximum height for selected images.                       |                    |
 
 ### HLPickerItem (Response)
 
@@ -205,7 +211,7 @@ _openCropper_() async {
 | id        | The unique identifier of the item.                   | String  |
 | name      | The filename of the item.                            | String  |
 | mimeType  | The MIME type of the item.                           | String  |
-| size      | The size of the item in kilobytes (KB).              | int     |
+| size      | The size of the item in bytes.                       | int     |
 | width     | The width of the item                                | int     |
 | height    | The height of the item                               | int     |
 | type      | Indicates whether the item is an `image` or `video`. | String  |

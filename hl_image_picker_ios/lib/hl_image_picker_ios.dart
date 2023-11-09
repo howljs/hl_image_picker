@@ -58,6 +58,12 @@ class HLImagePickerIOS extends HLImagePickerPlatform {
     assert(thumbnailCompressQuality == null ||
         (thumbnailCompressQuality > 0 && thumbnailCompressQuality <= 1));
 
+    int? pickerWidth = pickerOptions?.maxSizeOutput?.maxWidth;
+    assert(pickerWidth == null || pickerWidth >= 10);
+
+    int? pickerHeight = pickerOptions?.maxSizeOutput?.maxHeight;
+    assert(pickerHeight == null || pickerHeight >= 10);
+
     int? cropWidth = cropOptions?.maxSizeOutput?.maxWidth;
     assert(cropWidth == null || cropWidth >= 10);
 
@@ -85,8 +91,8 @@ class HLImagePickerIOS extends HLImagePickerPlatform {
       'aspectRatioPresets': (cropOptions?.aspectRatioPresets ?? defaultPresets)
           .map((e) => e.value)
           .toList(),
-      'compressQuality': cropCompressQuality,
-      'compressFormat': cropOptions?.compressFormat?.name,
+      'cropCompressQuality': cropCompressQuality,
+      'cropCompressFormat': cropOptions?.compressFormat?.name,
       'croppingStyle': cropOptions?.croppingStyle?.name,
       'thumbnailCompressQuality': thumbnailCompressQuality,
       'thumbnailCompressFormat': pickerOptions?.thumbnailCompressFormat?.name,
@@ -103,6 +109,10 @@ class HLImagePickerIOS extends HLImagePickerPlatform {
       'cropMaxWidth': cropWidth,
       'cropMaxHeight': cropHeight,
       'localized': localized?.toMap(),
+      'maxWidth': pickerWidth,
+      'maxHeight': pickerHeight,
+      'compressQuality': pickerOptions?.compressQuality,
+      'compressFormat': pickerOptions?.compressFormat?.name,
     });
     List<HLPickerItem> selectedItems = [];
     if (data != null) {
@@ -134,6 +144,12 @@ class HLImagePickerIOS extends HLImagePickerPlatform {
     assert(cropCompressQuality == null ||
         (cropCompressQuality > 0 && cropCompressQuality <= 1));
 
+    int? cameraWidth = cameraOptions?.maxSizeOutput?.maxWidth;
+    assert(cameraWidth == null || cameraWidth >= 10);
+
+    int? cameraHeight = cameraOptions?.maxSizeOutput?.maxHeight;
+    assert(cameraHeight == null || cameraHeight >= 10);
+
     int? cropWidth = cropOptions?.maxSizeOutput?.maxWidth;
     assert(cropWidth == null || cropWidth >= 10);
 
@@ -156,8 +172,8 @@ class HLImagePickerIOS extends HLImagePickerPlatform {
       'aspectRatioPresets': (cropOptions?.aspectRatioPresets ?? defaultPresets)
           .map((e) => e.value)
           .toList(),
-      'compressQuality': cropOptions?.compressQuality,
-      'compressFormat': cropOptions?.compressFormat?.name,
+      'cropCompressQuality': cropOptions?.compressQuality,
+      'cropCompressFormat': cropOptions?.compressFormat?.name,
       'recordVideoMaxSecond': cameraOptions?.recordVideoMaxSecond,
       'isExportThumbnail': cameraOptions?.isExportThumbnail,
       'thumbnailCompressQuality': cameraOptions?.thumbnailCompressQuality,
@@ -165,6 +181,10 @@ class HLImagePickerIOS extends HLImagePickerPlatform {
       'croppingStyle': cropOptions?.croppingStyle?.name,
       'cropMaxWidth': cropWidth,
       'cropMaxHeight': cropHeight,
+      'cameraMaxWidth': cameraWidth,
+      'cameraMaxHeight': cameraHeight,
+      'cameraCompressQuality': cameraOptions?.compressQuality,
+      'cameraCompressFormat': cameraOptions?.compressFormat?.name,
       'localized': localized?.toMap(),
     });
     return HLPickerItem.fromMap(data);
@@ -209,8 +229,8 @@ class HLImagePickerIOS extends HLImagePickerPlatform {
       'aspectRatioPresets': (cropOptions?.aspectRatioPresets ?? defaultPresets)
           .map((e) => e.value)
           .toList(),
-      'compressQuality': cropOptions?.compressQuality,
-      'compressFormat': cropOptions?.compressFormat?.name,
+      'cropCompressQuality': cropOptions?.compressQuality,
+      'cropCompressFormat': cropOptions?.compressFormat?.name,
       'croppingStyle': cropOptions?.croppingStyle?.name,
       'cropMaxWidth': cropWidth,
       'cropMaxHeight': cropHeight,
