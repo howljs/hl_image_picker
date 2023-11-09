@@ -3,7 +3,7 @@ description: iOS implementation of the hl_image_picker plugin.
 repository: https://github.com/howljs/hl_image_picker/tree/main/hl_image_picker_ios
 issue_tracker: https://github.com/howljs/hl_image_picker/issues
 
-version: 1.2.4
+version: 1.2.5
 
 environment:
   sdk: ">=2.18.0 <4.0.0"
@@ -12,7 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  hl_image_picker_platform_interface: ^1.2.1
+  hl_image_picker_platform_interface: ^1.2.2
 
 dev_dependencies:
   flutter_test:

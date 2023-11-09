@@ -122,7 +122,14 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
                 if isCropEnabled {
                     openCropper(image: image)
                 } else {
-                    let imageData = HLImagePickerUtils.copyImage(image)
+                    let compressQuality = arguments?["cameraCompressQuality"] as? Double
+                    let compressFormat = arguments?["cameraCompressFormat"] as? String
+                    var targetSize: CGSize?
+                    if let cameraMaxWidth = arguments?["cameraMaxWidth"] as? Int,
+                       let cameraMaxHeight = arguments?["cameraMaxHeight"] as? Int {
+                        targetSize = CGSize(width: CGFloat(cameraMaxWidth), height: CGFloat(cameraMaxHeight))
+                    }
+                    let imageData = HLImagePickerUtils.copyImage(image, quality: compressQuality, format: compressFormat, targetSize: targetSize)
                     result!(imageData)
                     picker.dismiss(animated: true, completion: nil)
                 }
@@ -220,12 +227,21 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         var data: Array<NSDictionary> = Array<NSDictionary>()
         let isConvertLivePhoto = arguments?["convertLivePhotosToJPG"] as? Bool ?? true
         let isConvertHeic = arguments?["convertHeicToJPG"] as? Bool ?? false
+        let compressQuality = arguments?["compressQuality"] as? Double
+        let compressFormat = arguments?["compressFormat"] as? String
+        var targetSize: CGSize?
+        if let maxWidth = arguments?["maxWidth"] as? Int,
+           let maxHeight = arguments?["maxHeight"] as? Int {
+            targetSize = CGSize(width: CGFloat(maxWidth), height: CGFloat(maxHeight))
+        }
         for asset in withTLPHAssets {
             group.enter()
             let isHeicPhoto = asset.extType() == .heic
             let isLivePhoto = asset.phAsset?.mediaSubtypes.contains(.photoLive) == true
-            if isConvertHeic && isHeicPhoto && !isLivePhoto, let uiImage = asset.fullResolutionImage {
-                if let imageInfo = HLImagePickerUtils.copyImage(uiImage) {
+            let isGif = asset.phAsset?.playbackStyle == .imageAnimated
+            let isCompressImage = asset.type == .photo && !isGif && (targetSize != nil || compressQuality != nil || compressFormat != nil)
+            if (isConvertHeic && isHeicPhoto && !isLivePhoto) || isCompressImage, let uiImage = asset.fullResolutionImage {
+                if let imageInfo = HLImagePickerUtils.copyImage(uiImage, quality: compressQuality, format: compressFormat, targetSize: targetSize) {
                     let media = NSDictionary(dictionary: imageInfo)
                     data.append(media)
                 }
@@ -323,7 +339,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         if phAsset?.mediaType == .video {
             media["type"] = "video"
             asset.videoSize { mediaSize in
-                media["size"] = mediaSize / 1024
+                media["size"] = mediaSize
             }
             let isGenerateThumbnail = arguments?["isExportThumbnail"] as? Bool ?? false
             if isGenerateThumbnail {
@@ -335,7 +351,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         } else {
             media["type"] = "image"
             asset.photoSize { mediaSize in
-                media["size"] = mediaSize / 1024
+                media["size"] = mediaSize
             }
         }
         return media
@@ -403,8 +419,8 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     }
     
     public func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
-        let compressQuality = arguments?["compressQuality"] as? Double
-        let compressFormat = arguments?["compressFormat"] as? String
+        let compressQuality = arguments?["cropCompressQuality"] as? Double
+        let compressFormat = arguments?["cropCompressFormat"] as? String
         var targetSize: CGSize?
         if let cropMaxWidth = arguments?["cropMaxWidth"] as? Int,
            let cropMaxHeight = arguments?["cropMaxHeight"] as? Int {

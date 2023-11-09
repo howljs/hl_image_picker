@@ -48,7 +48,7 @@ class HLImagePickerUtils {
         do {
             let fileAttributes = try FileManager.default.attributesOfItem(atPath: filePath)
             if let fileSize = fileAttributes[FileAttributeKey.size] as? UInt64 {
-                return fileSize / 1024
+                return fileSize
             }
         } catch {
             print("Error getting file size: \(error)")
@@ -165,18 +165,36 @@ class HLImagePickerUtils {
     }
     
     static func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
-        let size = image.size
-        let widthRatio = targetSize.width == 0 ? 1 : targetSize.width / size.width
-        let heightRatio = targetSize.height == 0 ? 1 : targetSize.height / size.height
-        let scaleFactor = min(widthRatio, heightRatio)
-        
-        let scaledSize = CGSize(width: size.width * scaleFactor, height: size.height * scaleFactor)
-        let renderer = UIGraphicsImageRenderer(size: scaledSize)
-        
-        let resizedImage = renderer.image { context in
-            image.draw(in: CGRect(origin: .zero, size: scaledSize))
+        let maxWidth = targetSize.width
+        let maxHeight = targetSize.height
+
+        if maxWidth == 0 || maxHeight == 0 {
+            return image
         }
         
-        return resizedImage
+        if image.size.width <= maxWidth && image.size.height <= maxHeight {
+            return image
+        }
+        
+        var newSize = CGSize(width: image.size.width, height: image.size.height)
+        if maxWidth < newSize.width {
+            newSize = CGSize(width: maxWidth, height: (maxWidth / newSize.width) * newSize.height)
+        }
+        if maxHeight < newSize.height {
+            newSize = CGSize(width: (maxHeight / newSize.height) * newSize.width, height: maxHeight)
+        }
+        
+        newSize.width = floor(newSize.width)
+        newSize.height = floor(newSize.height)
+        
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        image.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
+        guard let newImage = UIGraphicsGetImageFromCurrentImageContext() else {
+            UIGraphicsEndImageContext()
+            return image
+        }
+        UIGraphicsEndImageContext()
+        
+        return newImage
     }
 }

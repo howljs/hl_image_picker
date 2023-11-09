@@ -1,3 +1,8 @@
+## 1.2.8
+
+* Support quality compression for selected images
+* Can set maxSizeOutput (maxWidth and maxHeight) for selected images
+
 ## 1.2.7
 
 - feat: support gif selection
