@@ -1,3 +1,7 @@
+## 1.2.10
+
+* Update dependencies version
+
 ## 1.2.9
 
 * Android Gradle Plugin 8 support
