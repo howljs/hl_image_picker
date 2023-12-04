@@ -1,3 +1,7 @@
+## 1.2.6
+
+* fix: not possible preselect compressed photos
+
 ## 1.2.5
 
 * Support quality compression for selected images

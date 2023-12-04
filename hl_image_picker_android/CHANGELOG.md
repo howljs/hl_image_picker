@@ -1,3 +1,7 @@
+## 1.2.4
+
+* Android Gradle Plugin 8 support
+
 ## 1.2.3
 
 * Support quality compression for selected images

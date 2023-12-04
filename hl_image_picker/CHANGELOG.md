@@ -1,3 +1,8 @@
+## 1.2.9
+
+* Android Gradle Plugin 8 support
+* fix: not possible preselect compressed photos
+
 ## 1.2.8
 
 * Support quality compression for selected images
