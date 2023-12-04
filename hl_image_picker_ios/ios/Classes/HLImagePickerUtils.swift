@@ -56,7 +56,7 @@ class HLImagePickerUtils {
         return 0
     }
     
-    static func copyImage(_ image: UIImage, quality: Double? = nil, format: String? = nil, targetSize: CGSize? = nil) -> [String : Any]? {
+    static func copyImage(_ image: UIImage, quality: Double? = nil, format: String? = nil, targetSize: CGSize? = nil, id: String? = nil) -> [String : Any]? {
         var data: Data?
         var fileName: String
         let randomId = randomString(length: 10)
@@ -83,7 +83,7 @@ class HLImagePickerUtils {
             try data.write(to: fileURL)
             let media = [
                 "path": fileURL.path,
-                "id": fileName,
+                "id": id ?? fileName,
                 "name": fileName,
                 "mimeType": "image/jpeg",
                 "size": getFileSize(at: fileURL.path),

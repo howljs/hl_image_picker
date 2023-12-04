@@ -241,7 +241,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             let isGif = asset.phAsset?.playbackStyle == .imageAnimated
             let isCompressImage = asset.type == .photo && !isGif && (targetSize != nil || compressQuality != nil || compressFormat != nil)
             if (isConvertHeic && isHeicPhoto && !isLivePhoto) || isCompressImage, let uiImage = asset.fullResolutionImage {
-                if let imageInfo = HLImagePickerUtils.copyImage(uiImage, quality: compressQuality, format: compressFormat, targetSize: targetSize) {
+                if let imageInfo = HLImagePickerUtils.copyImage(uiImage, quality: compressQuality, format: compressFormat, targetSize: targetSize, id: asset.phAsset?.localIdentifier) {
                     let media = NSDictionary(dictionary: imageInfo)
                     data.append(media)
                 }
