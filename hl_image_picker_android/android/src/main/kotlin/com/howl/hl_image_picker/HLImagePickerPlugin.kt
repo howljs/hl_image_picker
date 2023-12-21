@@ -107,7 +107,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
             "video" -> SelectMimeType.ofVideo()
             else -> SelectMimeType.ofImage()
         }
-        val recordVideoMaxSecond = flutterCall?.argument<Int>("recordVideoMaxSecond") ?: 60
+        val recordVideoMaxSecond = flutterCall?.argument<Int>("recordVideoMaxSecond") ?: 0
         val maxWidth = flutterCall?.argument<Int>("cameraMaxWidth")
         val maxHeight = flutterCall?.argument<Int>("cameraMaxHeight")
         val compressQuality = flutterCall?.argument<Double>("cameraCompressQuality")
@@ -157,7 +157,6 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
         val usedCameraButton = flutterCall?.argument<Boolean>("usedCameraButton") ?: true
         val maxFileSize = flutterCall?.argument<Double>("maxFileSize") ?: 0.0
         val minFileSize = flutterCall?.argument<Double>("minFileSize") ?: 0.0
-        val recordVideoMaxSecond = flutterCall?.argument<Int>("recordVideoMaxSecond") ?: 60
         val maxDuration = flutterCall?.argument<Int>("maxDuration") ?: 0
         val minDuration = flutterCall?.argument<Int>("minDuration") ?: 0
         val isGif = flutterCall?.argument<Boolean>("isGif") ?: false
@@ -188,7 +187,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                 .setImageEngine(GlideEngine.createGlideEngine())
                 .setCropEngine(getCropFileEngine())
                 .setVideoThumbnailListener(getVideoThumbnail())
-                .setRecordVideoMaxSecond(recordVideoMaxSecond)
+                .setRecordVideoMaxSecond(maxDuration)
                 .setSelectMaxDurationSecond(maxDuration)
                 .setSelectMinDurationSecond(minDuration)
                 .setPermissionDeniedListener { fragment, permissionArray, _, _ ->

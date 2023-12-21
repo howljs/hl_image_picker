@@ -15,7 +15,7 @@ class HLPickerOptions {
     this.convertHeicToJPG,
     this.convertLivePhotosToJPG,
     this.isExportThumbnail,
-    this.recordVideoMaxSecond,
+    @Deprecated('Use maxDuration instead') this.recordVideoMaxSecond,
     this.thumbnailCompressQuality,
     this.thumbnailCompressFormat,
     this.maxDuration,
@@ -61,8 +61,6 @@ class HLPickerOptions {
   final bool? convertLivePhotosToJPG;
 
   /// The maximum duration (in seconds) for recorded video.
-  ///
-  /// Default: `60` seconds
   final int? recordVideoMaxSecond;
 
   /// Determines whether to export thumbnail for selected videos.
@@ -107,7 +105,7 @@ class HLPickerOptions {
   final double? compressQuality;
 
   /// The image format for compressed images: [CompressFormat.jpg], [CompressFormat.png].
-  /// 
+  ///
   /// Default: [CompressFormat.jpg]
   final CompressFormat? compressFormat;
 
@@ -124,7 +122,6 @@ class HLPickerOptions {
     result['enablePreview'] = enablePreview;
     result['convertHeicToJPG'] = convertHeicToJPG;
     result['convertLivePhotosToJPG'] = convertLivePhotosToJPG;
-    result['recordVideoMaxSecond'] = recordVideoMaxSecond;
     result['maxDuration'] = maxDuration;
     result['minDuration'] = minDuration;
     result['isExportThumbnail'] = isExportThumbnail;

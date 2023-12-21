@@ -61,7 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
           isExportThumbnail: _isExportThumbnail,
           thumbnailCompressFormat: CompressFormat.jpg,
           thumbnailCompressQuality: 0.9,
-          recordVideoMaxSecond: 40,
           maxSelectedAssets: _isCroppingEnabled ? 1 : _count,
           usedCameraButton: _usedCameraButton,
           numberOfColumn: _numberOfColumn,

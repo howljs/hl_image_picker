@@ -166,7 +166,6 @@ _openCropper_() async {
 | enablePreview            | Enables or disables the preview feature. (**Press** on Android and **Long Press** on iOS) | false              |
 | convertHeicToJPG         | Converts HEIC format images to JPEG format when selected.                                 | false              |
 | convertLivePhotosToJPG   | Converts Live Photos to JPEG format when selected.                                        | true               |
-| recordVideoMaxSecond     | The maximum duration (in seconds) for recorded video.                                     | 60                 |
 | isExportThumbnail        | Determines whether to export thumbnail for selected videos.                               | false              |
 | thumbnailCompressQuality | The compression quality (0.1-1) for exported thumbnails.                                  | 0.9                |
 | thumbnailCompressFormat  | The image format for exported thumbnails: `CompressFormat.jpg`, `CompressFormat.png`.     | CompressFormat.jpg |
@@ -195,7 +194,7 @@ _openCropper_() async {
 | Property                 | Description                                                                          | Default            |
 | ------------------------ | ------------------------------------------------------------------------------------ | ------------------ |
 | cameraType               | Specifies the type of camera to be used: `CameraType.video`, `CameraType.image`      | CameraType.image   |
-| recordVideoMaxSecond     | The maximum duration (in seconds) for recorded video.                                | 60                 |
+| recordVideoMaxSecond     | The maximum duration (in seconds) for recorded video.                                |                    |
 | isExportThumbnail        | Determines whether to export thumbnail for recorded video.                           | false              |
 | thumbnailCompressQuality | The compression quality (0.1-1) for exported thumbnail.                              | 0.9                |
 | thumbnailCompressFormat  | The image format for exported thumbnail: `CompressFormat.jpg`, `CompressFormat.png`. | CompressFormat.jpg |

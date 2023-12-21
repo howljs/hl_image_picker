@@ -18,8 +18,6 @@ class HLCameraOptions {
   final CameraType? cameraType;
 
   /// The maximum duration (in seconds) for recorded video.
-  ///
-  /// Default: `60` seconds
   final int? recordVideoMaxSecond;
 
   /// Determines whether to export thumbnail for recorded video.

@@ -96,8 +96,8 @@ class HLImagePickerAndroid extends HLImagePickerPlatform {
       'croppingStyle': cropOptions?.croppingStyle?.name,
       'thumbnailCompressQuality': pickerOptions?.thumbnailCompressQuality,
       'thumbnailCompressFormat': pickerOptions?.thumbnailCompressFormat?.name,
-      'recordVideoMaxSecond': pickerOptions?.recordVideoMaxSecond,
-      'maxDuration': pickerOptions?.maxDuration,
+      'maxDuration':
+          pickerOptions?.maxDuration ?? pickerOptions?.recordVideoMaxSecond,
       'convertLivePhotosToJPG': pickerOptions?.convertLivePhotosToJPG,
       'convertHeicToJPG': pickerOptions?.convertHeicToJPG,
       'minSelectedAssets': pickerOptions?.minSelectedAssets,

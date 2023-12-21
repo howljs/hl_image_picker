@@ -72,8 +72,9 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
                             if self.arguments?["cameraType"] as? String == "video" {
                                 imagePicker.mediaTypes = [kUTTypeMovie as String]
                                 imagePicker.videoQuality = .typeHigh
-                                let recordVideoMaxSecond = self.arguments?["recordVideoMaxSecond"] as? Int ?? 60
-                                imagePicker.videoMaximumDuration = TimeInterval(recordVideoMaxSecond)
+                                if let recordVideoMaxSecond = self.arguments?["recordVideoMaxSecond"] as? Int {
+                                    imagePicker.videoMaximumDuration = TimeInterval(recordVideoMaxSecond)
+                                }
                             }
                             UIApplication.topViewController()?.present(imagePicker, animated: true, completion: nil)
                         }
@@ -160,8 +161,9 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         let defaultAlbumName = uiStyle?["defaultAlbumName"] as? String ?? "Recents"
         configure.customLocalizedTitle = ["Recents": defaultAlbumName]
         configure.usedCameraButton = arguments?["usedCameraButton"] as? Bool ?? true
-        let recordVideoMaxSecond = arguments?["recordVideoMaxSecond"] as? Int ?? 60
-        configure.maxVideoDuration = TimeInterval(recordVideoMaxSecond)
+        if let maxDuration = arguments?["maxDuration"] as? Int {
+            configure.maxVideoDuration = TimeInterval(maxDuration)
+        }
         let numberOfColumn = arguments?["numberOfColumn"] as? Int ?? 3
         configure.numberOfColumn = numberOfColumn
         let maxSelectedAssets = arguments?["maxSelectedAssets"] as? Int ?? 1
