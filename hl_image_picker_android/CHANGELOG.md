@@ -1,3 +1,13 @@
+## 1.2.6
+
+* Deprecate `recordVideoMaxSecond` in HLImagePickerOptions
+* Remove default value for `recordVideoMaxSecond` in HLCameraOptions
+
+## 1.2.5
+
+* Upgrade PickerSelector to 3.11.2
+* Import com.luck.picture.lib.R
+
 ## 1.2.4
 
 * Android Gradle Plugin 8 support

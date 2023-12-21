@@ -1,3 +1,9 @@
+## 1.2.7
+
+* Deprecate `recordVideoMaxSecond` in HLImagePickerOptions
+* Remove default value for `recordVideoMaxSecond` in HLCameraOptions
+* Change exportPreset to `AVAssetExportPresetPassthrough`
+
 ## 1.2.6
 
 * fix: not possible preselect compressed photos

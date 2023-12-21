@@ -1,3 +1,10 @@
+## 1.2.11
+
+* Deprecate `recordVideoMaxSecond` in HLImagePickerOptions
+* Remove default value for `recordVideoMaxSecond` in HLCameraOptions
+* Change exportPreset to `AVAssetExportPresetPassthrough`
+* Upgrade PickerSelector to 3.11.2
+
 ## 1.2.10
 
 * Update dependencies version

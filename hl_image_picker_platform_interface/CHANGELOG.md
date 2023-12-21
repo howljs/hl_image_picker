@@ -1,3 +1,8 @@
+## 1.2.3
+
+* Deprecate `recordVideoMaxSecond` in HLImagePickerOptions
+* Remove default value for `recordVideoMaxSecond` in HLCameraOptions
+
 ## 1.2.2
 
 * Support quality compression for selected images
