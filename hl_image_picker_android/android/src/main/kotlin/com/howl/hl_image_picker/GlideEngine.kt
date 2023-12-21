@@ -7,6 +7,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.luck.picture.lib.engine.ImageEngine
 import com.luck.picture.lib.utils.ActivityCompatHelper
+import com.luck.picture.lib.R as PictureSelectorR
 
 class GlideEngine private constructor() : ImageEngine {
     override fun loadImage(context: Context, url: String, imageView: ImageView) {
@@ -38,7 +39,7 @@ class GlideEngine private constructor() : ImageEngine {
                 .override(180, 180)
                 .sizeMultiplier(0.5f)
                 .transform(CenterCrop(), RoundedCorners(8))
-                .placeholder(R.drawable.ps_image_placeholder)
+                .placeholder(PictureSelectorR.drawable.ps_image_placeholder)
                 .into(imageView)
     }
 
@@ -50,7 +51,7 @@ class GlideEngine private constructor() : ImageEngine {
                 .load(url)
                 .override(200, 200)
                 .centerCrop()
-                .placeholder(R.drawable.ps_image_placeholder)
+                .placeholder(PictureSelectorR.drawable.ps_image_placeholder)
                 .into(imageView)
     }
 
