@@ -249,7 +249,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
                 }
                 group.leave();
             } else {
-                let result = asset.tempCopyMediaFile(convertLivePhotosToJPG: isConvertLivePhoto, completionBlock: { (filePath, fileType) in
+                let result = asset.tempCopyMediaFile(exportPreset: AVAssetExportPresetPassthrough, convertLivePhotosToJPG: isConvertLivePhoto, completionBlock: { (filePath, fileType) in
                     let media = NSDictionary(dictionary: self.buildResponse(path: filePath, withType: fileType, withAsset: asset))
                     data.append(media)
                     group.leave();
