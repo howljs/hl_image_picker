@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
           isExportThumbnail: _isExportThumbnail,
           thumbnailCompressFormat: CompressFormat.jpg,
           thumbnailCompressQuality: 0.9,
-          maxSelectedAssets: _isCroppingEnabled ? 1 : _count,
+          maxSelectedAssets: _count,
           usedCameraButton: _usedCameraButton,
           numberOfColumn: _numberOfColumn,
           isGif: true,
@@ -186,6 +186,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         }
                       },
                     ),
+                    IncreaseAndDecrease(
+                        label: "Max selected assets",
+                        value: _count,
+                        onChanged: (value) => setState(() {
+                              _count = value;
+                            })),
                     ..._type == MediaType.image
                         ? [
                             CustomSwitch(
@@ -206,85 +212,76 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ],
 
-                    ..._isCroppingEnabled
-                        ? [
-                            const SizedBox(height: 16),
-                            const Text("Cropping style"),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: RadioListTile(
-                                    value: CroppingStyle.normal,
-                                    groupValue: _croppingStyle,
-                                    title: const Text("Normal"),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _croppingStyle = CroppingStyle.normal;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                Expanded(
-                                  child: RadioListTile(
-                                    value: CroppingStyle.circular,
-                                    groupValue: _croppingStyle,
-                                    title: const Text("Circular"),
-                                    onChanged: (_) {
-                                      setState(() {
-                                        _croppingStyle = CroppingStyle.circular;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
+                    if (_isCroppingEnabled) ...[
+                      const SizedBox(height: 16),
+                      const Text("Cropping style"),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RadioListTile(
+                              value: CroppingStyle.normal,
+                              groupValue: _croppingStyle,
+                              title: const Text("Normal"),
+                              onChanged: (value) {
+                                setState(() {
+                                  _croppingStyle = CroppingStyle.normal;
+                                });
+                              },
                             ),
-                            const SizedBox(height: 16),
-                            AspectRatioSelect(
-                                aspectRatio: _aspectRatio,
-                                aspectRatioPresets: _aspectRatioPresets,
-                                onChangedPreset: (preset, value) {
-                                  setState(() {
-                                    if (_aspectRatioPresets == null) {
-                                      _aspectRatioPresets = [preset];
-                                    } else {
-                                      if (value) {
-                                        _aspectRatioPresets!.add(preset);
-                                      } else {
-                                        _aspectRatioPresets!.remove(preset);
-                                        if (_aspectRatioPresets!.isEmpty) {
-                                          _aspectRatioPresets = null;
-                                        }
-                                      }
-                                    }
-                                  });
-                                },
-                                onChangeCustomRatio: (newRatio) => {
-                                      setState(() {
-                                        _aspectRatio = newRatio;
-                                      })
-                                    }),
-                            const SizedBox(height: 16),
-                            Text("Compress quality ($_compressQuality)"),
-                            Slider(
-                                label: "$_compressQuality",
-                                value: _compressQuality,
-                                min: 0.1,
-                                max: 1,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _compressQuality =
-                                        double.parse(value.toStringAsFixed(1));
-                                  });
-                                }),
-                          ]
-                        : [
-                            IncreaseAndDecrease(
-                                label: "Max selected assets",
-                                value: _count,
-                                onChanged: (value) => setState(() {
-                                      _count = value;
-                                    }))
-                          ],
+                          ),
+                          Expanded(
+                            child: RadioListTile(
+                              value: CroppingStyle.circular,
+                              groupValue: _croppingStyle,
+                              title: const Text("Circular"),
+                              onChanged: (_) {
+                                setState(() {
+                                  _croppingStyle = CroppingStyle.circular;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      AspectRatioSelect(
+                          aspectRatio: _aspectRatio,
+                          aspectRatioPresets: _aspectRatioPresets,
+                          onChangedPreset: (preset, value) {
+                            setState(() {
+                              if (_aspectRatioPresets == null) {
+                                _aspectRatioPresets = [preset];
+                              } else {
+                                if (value) {
+                                  _aspectRatioPresets!.add(preset);
+                                } else {
+                                  _aspectRatioPresets!.remove(preset);
+                                  if (_aspectRatioPresets!.isEmpty) {
+                                    _aspectRatioPresets = null;
+                                  }
+                                }
+                              }
+                            });
+                          },
+                          onChangeCustomRatio: (newRatio) => {
+                                setState(() {
+                                  _aspectRatio = newRatio;
+                                })
+                              }),
+                      const SizedBox(height: 16),
+                      Text("Compress quality ($_compressQuality)"),
+                      Slider(
+                          label: "$_compressQuality",
+                          value: _compressQuality,
+                          min: 0.1,
+                          max: 1,
+                          onChanged: (value) {
+                            setState(() {
+                              _compressQuality =
+                                  double.parse(value.toStringAsFixed(1));
+                            });
+                          }),
+                    ],
 
                     // Common
                     const Padding(

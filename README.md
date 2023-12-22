@@ -9,6 +9,15 @@
 
 Simplify media selection, cropping, and camera functionality in your Flutter app. Choose images/videos from the library, crop images, and capture new photos/videos with ease.
 
+## Features:
+
+- Select images/videos from the library
+- Take a photo or record a video
+- Open image cropper
+- Support crop multiple images
+- Support quality compression for selected images
+- Support gif selection
+
 | iOS                                                                                                                 | Android                                                                                                                   |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://github.com/howljs/hl_image_picker/blob/main/__assets__/ios_picker_demo.gif?raw=true" width="160"> | <img src="https://github.com/howljs/hl_image_picker/blob/main/__assets__/android_picker_sample.gif?raw=true" width="160"> |
