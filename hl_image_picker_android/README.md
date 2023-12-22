@@ -92,7 +92,7 @@ _openPicker() async {
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------- |
 | selectedIds   | A list of string IDs representing the initially selected images or videos from the library. This allows users to pre-select items before opening the picker. | [String]                                      |
 | pickerOptions | Additional options for the picker                                                                                                                            | [HLPickerOptions](#hlpickeroptions)           |
-| cropping      | Indicating whether or not cropping is enabled. Just work when `mediaType = MediaType.image` and `maxSelectedAssets = 1`                                      | bool                                          |
+| cropping      | Indicating whether or not cropping is enabled. Just work when `mediaType = MediaType.image`                                                                  | bool                                          |
 | cropOptions   | Configuration options for the cropping functionality                                                                                                         | [HLCropOptions](#hlcropoptions)               |
 | localized     | Custom text displayed for the plugin                                                                                                                         | [LocalizedImagePicker](#localizedimagepicker) |
 

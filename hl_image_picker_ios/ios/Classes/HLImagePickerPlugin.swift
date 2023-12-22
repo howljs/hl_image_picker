@@ -5,6 +5,12 @@ import TLPhotoPicker
 import CropViewController
 import MobileCoreServices
 
+enum PickerType {
+    case picker
+    case camera
+    case cropper
+}
+
 public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewControllerDelegate, CropViewControllerDelegate, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "hl_image_picker", binaryMessenger: registrar.messenger())
@@ -15,33 +21,36 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     var arguments: NSDictionary? = nil
     var uiStyle: [String: Any]? = nil
     var result: FlutterResult? = nil
+    var croppedImages: [[String : Any]] = []
     
     var configure = TLPhotosPickerConfigure()
     var selectedAssets = [TLPHAsset]()
-    var isCropOne = false
+    var pickerType: PickerType? = nil
+    
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         case "openPicker":
+            self.pickerType = PickerType.picker
             self.arguments = call.arguments as? NSDictionary
             uiStyle = arguments?["localized"] as? [String: Any]
-            self.isCropOne = false
+            self.croppedImages = []
             self.result = result
             self.initConfig()
             self.openPicker()
             
         case "openCamera":
+            self.pickerType = PickerType.camera
             self.arguments = call.arguments as? NSDictionary
             uiStyle = arguments?["localized"] as? [String: Any]
-            self.isCropOne = true
             self.result = result
             self.openCamera()
             
         case "openCropper":
+            self.pickerType = PickerType.cropper
             self.arguments = call.arguments as? NSDictionary
             uiStyle = arguments?["localized"] as? [String: Any]
             self.result = result
-            self.isCropOne = true
             if let imagePath = self.arguments?["imagePath"] as? String,
                let imagePathEncode = imagePath.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
                let imageUrl = URL(string: "file://" + imagePathEncode),
@@ -213,59 +222,68 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             return;
         }
         
-        let isSingleMode = configure.singleSelectedMode == true
         let isCropEnabled = arguments?["cropping"] as? Bool ?? false
-        let isPhoto = withTLPHAssets.first?.type == .photo
-        let isLivePhoto = withTLPHAssets.first?.type == .livePhoto
-        let isImagePicker = isPhoto || isLivePhoto
-        if (isImagePicker && isCropEnabled && isSingleMode) {
-            guard let asset = withTLPHAssets.first?.fullResolutionImage else { return }
-            openCropper(image: asset)
-            return;
-        }
-        
-        let loadingAlert = showLoading()
-        let group = DispatchGroup()
-        var data: Array<NSDictionary> = Array<NSDictionary>()
-        let isConvertLivePhoto = arguments?["convertLivePhotosToJPG"] as? Bool ?? true
-        let isConvertHeic = arguments?["convertHeicToJPG"] as? Bool ?? false
-        let compressQuality = arguments?["compressQuality"] as? Double
-        let compressFormat = arguments?["compressFormat"] as? String
-        var targetSize: CGSize?
-        if let maxWidth = arguments?["maxWidth"] as? Int,
-           let maxHeight = arguments?["maxHeight"] as? Int {
-            targetSize = CGSize(width: CGFloat(maxWidth), height: CGFloat(maxHeight))
-        }
-        for asset in withTLPHAssets {
-            group.enter()
-            let isHeicPhoto = asset.extType() == .heic
-            let isLivePhoto = asset.phAsset?.mediaSubtypes.contains(.photoLive) == true
-            let isGif = asset.phAsset?.playbackStyle == .imageAnimated
-            let isCompressImage = asset.type == .photo && !isGif && (targetSize != nil || compressQuality != nil || compressFormat != nil)
-            if (isConvertHeic && isHeicPhoto && !isLivePhoto) || isCompressImage, let uiImage = asset.fullResolutionImage {
-                if let imageInfo = HLImagePickerUtils.copyImage(uiImage, quality: compressQuality, format: compressFormat, targetSize: targetSize, id: asset.phAsset?.localIdentifier) {
-                    let media = NSDictionary(dictionary: imageInfo)
-                    data.append(media)
-                }
-                group.leave();
-            } else {
-                let result = asset.tempCopyMediaFile(exportPreset: AVAssetExportPresetPassthrough, convertLivePhotosToJPG: isConvertLivePhoto, completionBlock: { (filePath, fileType) in
-                    let media = NSDictionary(dictionary: self.buildResponse(path: filePath, withType: fileType, withAsset: asset))
-                    data.append(media)
+        if (configure.mediaType == .image && isCropEnabled) {
+            self.processAssetForCropping(assets: withTLPHAssets)
+        } else {
+            let loadingAlert = showLoading()
+            let group = DispatchGroup()
+            var data: Array<NSDictionary> = Array<NSDictionary>()
+            let isConvertLivePhoto = arguments?["convertLivePhotosToJPG"] as? Bool ?? true
+            let isConvertHeic = arguments?["convertHeicToJPG"] as? Bool ?? false
+            let compressQuality = arguments?["compressQuality"] as? Double
+            let compressFormat = arguments?["compressFormat"] as? String
+            var targetSize: CGSize?
+            if let maxWidth = arguments?["maxWidth"] as? Int,
+               let maxHeight = arguments?["maxHeight"] as? Int {
+                targetSize = CGSize(width: CGFloat(maxWidth), height: CGFloat(maxHeight))
+            }
+            for asset in withTLPHAssets {
+                group.enter()
+                let isHeicPhoto = asset.extType() == .heic
+                let isLivePhoto = asset.phAsset?.mediaSubtypes.contains(.photoLive) == true
+                let isGif = asset.phAsset?.playbackStyle == .imageAnimated
+                let isCompressImage = asset.type == .photo && !isGif && (targetSize != nil || compressQuality != nil || compressFormat != nil)
+                if (isConvertHeic && isHeicPhoto && !isLivePhoto) || isCompressImage, let uiImage = asset.fullResolutionImage {
+                    if let imageInfo = HLImagePickerUtils.copyImage(uiImage, quality: compressQuality, format: compressFormat, targetSize: targetSize, id: asset.phAsset?.localIdentifier) {
+                        let media = NSDictionary(dictionary: imageInfo)
+                        data.append(media)
+                    }
                     group.leave();
-                })
-                if result == nil {
-                    group.leave();
+                } else {
+                    let result = asset.tempCopyMediaFile(exportPreset: AVAssetExportPresetPassthrough, convertLivePhotosToJPG: isConvertLivePhoto, completionBlock: { (filePath, fileType) in
+                        let media = NSDictionary(dictionary: self.buildResponse(path: filePath, withType: fileType, withAsset: asset))
+                        data.append(media)
+                        group.leave();
+                    })
+                    if result == nil {
+                        group.leave();
+                    }
                 }
             }
+            group.notify(queue: .main){ [] in
+                loadingAlert.dismiss(animated: true, completion: {
+                    UIApplication.topViewController()?.dismiss(animated: true, completion: nil)
+                    if data.isEmpty {
+                        self.result!(FlutterError(code: "PICKER_ERROR", message: "Picker error", details: nil))
+                    }else {
+                        self.result!(data);
+                    }
+                })
+            }
         }
-        group.notify(queue: .main){ [] in
-            loadingAlert.dismiss(animated: true, completion: {
-                UIApplication.topViewController()?.dismiss(animated: true, completion: nil)
-                if data.isEmpty {
-                    self.result!(FlutterError(code: "PICKER_ERROR", message: "Picker error", details: nil))
-                }else {
-                    self.result!(data);
+    }
+    
+    private func processAssetForCropping(assets: [TLPHAsset]) {
+        if let asset = assets.first, let image = asset.fullResolutionImage {
+            self.selectedAssets = Array(assets.dropFirst())
+            openCropper(image: image)
+        } else {
+            UIApplication.topViewController()?.dismiss(animated: true, completion: {
+                if self.croppedImages.isEmpty {
+                    self.result!(FlutterError(code: "CROP_ERROR", message: "Crop error", details: nil))
+                } else {
+                    self.result!(self.croppedImages)
                 }
             })
         }
@@ -416,7 +434,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             cropViewController.allowedAspectRatios = allowedAspectRatios
         }
         DispatchQueue.main.async {
-            UIApplication.topViewController()?.present(cropViewController, animated: true, completion: nil)
+            UIApplication.topViewController()?.present(cropViewController, animated: self.pickerType == .cropper, completion: nil)
         }
     }
     
@@ -430,27 +448,41 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         }
         let croppedImage = HLImagePickerUtils.copyImage(image, quality: compressQuality, format: compressFormat, targetSize: targetSize)
         DispatchQueue.main.async {
-            UIApplication.topViewController()?.dismiss(animated: false, completion: {
-                UIApplication.topViewController()?.dismiss(animated: true, completion: {
-                    if croppedImage != nil {
-                        if self.isCropOne {
+            if(self.pickerType == .camera) {
+                UIApplication.topViewController()?.dismiss(animated: false, completion: {
+                    UIApplication.topViewController()?.dismiss(animated: true, completion: {
+                        if croppedImage != nil {
                             self.result!(croppedImage)
                         } else {
-                            self.result!([croppedImage])
+                            self.result!(FlutterError(code: "CROP_ERROR", message: "Crop error", details: nil))
                         }
+                    })
+                })
+            } else if(self.pickerType == .cropper) {
+                UIApplication.topViewController()?.dismiss(animated: true, completion: {
+                    if croppedImage != nil {
+                        self.result!(croppedImage)
                     } else {
                         self.result!(FlutterError(code: "CROP_ERROR", message: "Crop error", details: nil))
                     }
                 })
-            })
+            } else {
+                if let image = croppedImage {
+                    self.croppedImages.append(image)
+                }
+                UIApplication.topViewController()?.dismiss(animated: false, completion: {
+                    self.processAssetForCropping(assets: self.selectedAssets)
+                })
+            }
         }
     }
     
     public func cropViewController(_ cropViewController: CropViewController, didFinishCancelled cancelled: Bool) {
         if cancelled {
+            self.croppedImages = []
             DispatchQueue.main.async {
                 UIApplication.topViewController()?.dismiss(animated: false, completion: {
-                    if self.isCropOne {
+                    if self.pickerType == .camera {
                         UIApplication.topViewController()?.dismiss(animated: true, completion: nil)
                     }
                 })

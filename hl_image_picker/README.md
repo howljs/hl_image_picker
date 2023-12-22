@@ -9,6 +9,15 @@
 
 Simplify media selection, cropping, and camera functionality in your Flutter app. Choose images/videos from the library, crop images, and capture new photos/videos with ease.
 
+## Features:
+
+- Select images/videos from the library
+- Take a photo or record a video
+- Open image cropper
+- Support crop multiple images
+- Support quality compression for selected images
+- Support gif selection
+
 | iOS                                                                                                                 | Android                                                                                                                   |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://github.com/howljs/hl_image_picker/blob/main/__assets__/ios_picker_demo.gif?raw=true" width="160"> | <img src="https://github.com/howljs/hl_image_picker/blob/main/__assets__/android_picker_sample.gif?raw=true" width="160"> |
@@ -126,7 +135,7 @@ _openPicker() async {
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------- |
 | selectedIds   | A list of string IDs representing the initially selected images or videos from the library. This allows users to pre-select items before opening the picker. | [String]                                      |
 | pickerOptions | Additional options for the picker                                                                                                                            | [HLPickerOptions](#hlpickeroptions)           |
-| cropping      | Indicating whether or not cropping is enabled. Just work when `mediaType = MediaType.image` and `maxSelectedAssets = 1`                                      | bool                                          |
+| cropping      | Indicating whether or not cropping is enabled. Just work when `mediaType = MediaType.image`                                                                  | bool                                          |
 | cropOptions   | Configuration options for the cropping functionality                                                                                                         | [HLCropOptions](#hlcropoptions)               |
 | localized     | Custom text displayed for the plugin                                                                                                                         | [LocalizedImagePicker](#localizedimagepicker) |
 
@@ -151,12 +160,12 @@ _openCamera() async {
 
 **Properties**
 
-| Property      | Description                                          | Type                                            |
-| ------------- | ---------------------------------------------------- | ----------------------------------------------- |
-| cameraOptions | Additional options for the camera functionality      | [HLCameraOptions](#hlcameraoptions)             |
-| cropping      | Indicating whether or not cropping is enabled        | bool                                            |
-| cropOptions   | Configuration options for the cropping functionality | [HLCropOptions](#hlcropoptions)                 |
-| localized     | Custom text displayed for the plugin                 | [LocalizedImageCropper](#localizedimagecropper) |
+| Property      | Description                                                                                  | Type                                            |
+| ------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| cameraOptions | Additional options for the camera functionality                                              | [HLCameraOptions](#hlcameraoptions)             |
+| cropping      | Indicating whether or not cropping is enabled Just work when `cameraType = CameraType.image` | bool                                            |
+| cropOptions   | Configuration options for the cropping functionality                                         | [HLCropOptions](#hlcropoptions)                 |
+| localized     | Custom text displayed for the plugin                                                         | [LocalizedImageCropper](#localizedimagecropper) |
 
 ### Open image cropper
 

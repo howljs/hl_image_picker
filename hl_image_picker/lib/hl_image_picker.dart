@@ -29,7 +29,7 @@ class HLImagePicker {
   ///
   /// `pickerOptions`: Additional options for the picker: `mediaType`, `maxSelectedAssets`, `maxFileSize`,...
   ///
-  /// `cropping`: Indicating whether or not cropping is enabled. Just work when `mediaType = MediaType.image` and `maxSelectedAssets = 1`
+  /// `cropping`: Indicating whether or not cropping is enabled. Just work when `mediaType = MediaType.image`
   ///
   /// `cropOptions`: Configuration options for the cropping functionality: `aspectRatio`, `aspectRatioPresets`, `compressQuality`, `compressFormat`
   ///

@@ -1,3 +1,7 @@
+## 1.2.12
+
+* Support crop multiple images
+
 ## 1.2.11
 
 * Deprecate `recordVideoMaxSecond` in HLImagePickerOptions

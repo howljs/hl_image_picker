@@ -522,8 +522,12 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
 
     private fun getCropFileEngine(): ImageFileCropEngine? {
         val isCropEnabled = flutterCall?.argument<Boolean>("cropping") ?: false
-        val maxSelectedAssets = flutterCall?.argument<Int>("maxSelectedAssets") ?: 1
-        if (!isCropEnabled || maxSelectedAssets != 1) {
+        if (!isCropEnabled) {
+            return null
+        }
+        val isImagePicker = flutterCall?.argument<String>("mediaType") == "image"
+        val isImageCamera = flutterCall?.argument<String>("cameraType") == "image"
+        if (!isImagePicker && !isImageCamera) {
             return null
         }
         val options = UCrop.Options()
