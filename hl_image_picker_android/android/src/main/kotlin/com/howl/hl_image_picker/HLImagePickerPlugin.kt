@@ -56,7 +56,6 @@ import java.io.File
 import java.net.URLConnection
 
 private class AndroidQSandboxFileEngine : UriToFileTransformEngine {
-    private val fileCacheUtils = FileCacheUtils()
     override fun onUriToFileAsyncTransform(
         context: Context,
         srcPath: String?,
