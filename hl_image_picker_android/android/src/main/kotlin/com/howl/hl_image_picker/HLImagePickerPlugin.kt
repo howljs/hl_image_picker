@@ -27,6 +27,7 @@ import com.luck.picture.lib.config.SelectModeConfig
 import com.luck.picture.lib.config.SelectorConfig
 import com.luck.picture.lib.dialog.RemindDialog
 import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.engine.UriToFileTransformEngine;
 import com.luck.picture.lib.interfaces.OnInjectLayoutResourceListener
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.luck.picture.lib.permissions.PermissionConfig
@@ -36,6 +37,8 @@ import com.luck.picture.lib.style.SelectMainStyle
 import com.luck.picture.lib.style.TitleBarStyle
 import com.luck.picture.lib.utils.DateUtils
 import com.luck.picture.lib.utils.MediaUtils
+import com.luck.picture.lib.utils.SandboxTransformUtils;
+import com.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener
 import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropImageEngine
 import com.yalantis.ucrop.model.AspectRatio
@@ -52,6 +55,19 @@ import io.flutter.plugin.common.PluginRegistry
 import java.io.File
 import java.net.URLConnection
 
+private class AndroidQSandboxFileEngine : UriToFileTransformEngine {
+    private val fileCacheUtils = FileCacheUtils()
+    override fun onUriToFileAsyncTransform(
+        context: Context,
+        srcPath: String?,
+        mineType: String?,
+        call: OnKeyValueResultCallbackListener?
+    ) {
+        if (call != null) {
+            call.onCallback(srcPath, SandboxTransformUtils.copyPathToSandbox(context, srcPath, mineType))
+        }
+    }
+}
 
 /** HLImagePickerPlugin */
 class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.ActivityResultListener {
@@ -122,6 +138,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                 .setPermissionDeniedListener { fragment, permissionArray, _, _ ->
                     handlePermissionDenied(fragment, permissionArray)
                 }
+                .setSandboxFileEngine(AndroidQSandboxFileEngine())
                 .forResultActivity(object : OnResultCallbackListener<LocalMedia> {
                     override fun onResult(result: ArrayList<LocalMedia>?) {
                         if (result != null) {
@@ -211,6 +228,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                     }
                 })
                 .setInjectLayoutResourceListener(InjectLayoutResourceListener())
+                .setSandboxFileEngine(AndroidQSandboxFileEngine())
                 .forResult(object : OnResultCallbackListener<LocalMedia?> {
                     override fun onResult(result: ArrayList<LocalMedia?>?) {
                         shouldReturnOnDestroy = false
@@ -350,18 +368,19 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
     }
 
     private fun buildResponse(media: LocalMedia): Map<String, Any> {
+        val path = media.getAvailablePath()
         if (media.width == 0 || media.height == 0 || media.isCompressed) {
             if (PictureMimeType.isHasImage(media.mimeType)) {
-                val imageExtraInfo = MediaUtils.getImageSize(applicationContext, media.compressPath ?: media.realPath)
+                val imageExtraInfo = MediaUtils.getImageSize(applicationContext, path)
                 media.width = imageExtraInfo.width
                 media.height = imageExtraInfo.height
             } else if (PictureMimeType.isHasVideo(media.mimeType)) {
-                val imageExtraInfo = MediaUtils.getVideoSize(applicationContext, media.compressPath ?: media.realPath)
+                val imageExtraInfo = MediaUtils.getVideoSize(applicationContext, path)
                 media.width = imageExtraInfo.width
                 media.height = imageExtraInfo.height
             }
             if (media.isCompressed) {
-                val file = File(media.compressPath)
+                val file = File(path)
                 media.fileName = file.name
                 media.size = file.length()
                 val fileNameMap = URLConnection.getFileNameMap()
@@ -387,12 +406,12 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
         if (media.isCut) {
             item["width"] = media.cropImageWidth
             item["height"] = media.cropImageHeight
-            item["path"] = media.cutPath
         } else {
             item["width"] = media.width
             item["height"] = media.height
-            item["path"] = media.realPath
         }
+
+        item["path"] = path
         return item
     }
 
