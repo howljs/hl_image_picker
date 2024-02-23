@@ -1,5 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.howl.hl_image_picker">
+  <application>
+    <activity
+        android:name="com.yalantis.ucrop.UCropActivity"
+        android:configChanges="orientation|keyboardHidden|screenSize"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+    <activity
+        android:name="com.yalantis.ucrop.UCropMultipleActivity"
+        android:configChanges="orientation|keyboardHidden|screenSize"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+</application>
   <queries package="${applicationId}">
       <intent>
           <action android:name="android.media.action.IMAGE_CAPTURE">
