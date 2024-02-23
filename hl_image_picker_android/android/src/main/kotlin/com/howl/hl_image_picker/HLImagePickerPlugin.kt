@@ -430,6 +430,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                 File(getSandboxPath(), DateUtils.getCreateFileName("hl_image_picker_") + fileExt))
         val uCrop = UCrop.of<Any>(inputUri, destinationUri)
         val options = UCrop.Options()
+        options.setToolbarTitle(uiStyle.getOrElse("cropTitleText") {"Cropper"} as String)
         options.setCompressionFormat(compressFormat)
         options.setCompressionQuality((compressQuality * 100).toInt())
         val aspectRatioX = flutterCall?.argument<Double>("ratioX")
@@ -549,6 +550,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
             return null
         }
         val options = UCrop.Options()
+        options.setToolbarTitle(uiStyle.getOrElse("cropTitleText") {"Cropper"} as String)
         val aspectRatioX = flutterCall?.argument<Double>("ratioX")
         val aspectRatioY = flutterCall?.argument<Double>("ratioY")
         if (aspectRatioX != null && aspectRatioY != null) {
