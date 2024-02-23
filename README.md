@@ -295,15 +295,15 @@ _openCropper_() async {
 | emptyMediaText              | The text displayed when no media is available. (iOS Only)                              | No media available                          |
 | cropDoneText                | The text displayed on the "Done" button. (iOS Only)                                    | Done                                        |
 | cropCancelText              | The text displayed on the "Cancel" button. (iOS Only)                                  | Cancel                                      |
-| cropTitleText               | The title displayed in the crop image screen. (iOS Only)                               |                                             |
+| cropTitleText               | The title displayed in the crop image screen.                                          |                                             |
 
 ### LocalizedImageCropper
 
-| Property       | Description                                              | Default |
-| -------------- | -------------------------------------------------------- | ------- |
-| cropDoneText   | The text displayed on the "Done" button. (iOS Only)      | Done    |
-| cropCancelText | The text displayed on the "Cancel" button. (iOS Only)    | Cancel  |
-| cropTitleText  | The title displayed in the crop image screen. (iOS Only) |         |
+| Property       | Description                                           | Default |
+| -------------- | ----------------------------------------------------- | ------- |
+| cropDoneText   | The text displayed on the "Done" button. (iOS Only)   | Done    |
+| cropCancelText | The text displayed on the "Cancel" button. (iOS Only) | Cancel  |
+| cropTitleText  | The title displayed in the crop image screen.         |         |
 
 ## ProGuard
 

@@ -62,9 +62,7 @@ private class AndroidQSandboxFileEngine : UriToFileTransformEngine {
         mineType: String?,
         call: OnKeyValueResultCallbackListener?
     ) {
-        if (call != null) {
-            call.onCallback(srcPath, SandboxTransformUtils.copyPathToSandbox(context, srcPath, mineType))
-        }
+        call?.onCallback(srcPath, SandboxTransformUtils.copyPathToSandbox(context, srcPath, mineType))
     }
 }
 
@@ -367,7 +365,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
     }
 
     private fun buildResponse(media: LocalMedia): Map<String, Any> {
-        val path = media.getAvailablePath()
+        val path = media.availablePath
         if (media.width == 0 || media.height == 0 || media.isCompressed) {
             if (PictureMimeType.isHasImage(media.mimeType)) {
                 val imageExtraInfo = MediaUtils.getImageSize(applicationContext, path)

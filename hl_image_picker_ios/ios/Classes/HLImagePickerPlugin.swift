@@ -150,6 +150,11 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         }
     }
     
+    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+        self.result!(FlutterError(code: "CANCELED", message: "User has canceled the camera", details: nil))
+    }
+    
     // MARK: TLPhotoPicker
     
     private func initConfig() {
@@ -321,6 +326,10 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         
         return true
     }
+
+    public func photoPickerDidCancel() {
+        self.result!(FlutterError(code: "CANCELED", message: "User has canceled the picker", details: nil))
+    }
     
     public func handleNoAlbumPermissions(picker: TLPhotosPickerViewController) {
         picker.dismiss(animated: true) {
@@ -482,6 +491,9 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             self.croppedImages = []
             DispatchQueue.main.async {
                 UIApplication.topViewController()?.dismiss(animated: false, completion: {
+                    if self.pickerType == .cropper {
+                        self.result!(FlutterError(code: "CANCELED", message: "User has canceled the cropper", details: nil))
+                    }
                     if self.pickerType == .camera {
                         UIApplication.topViewController()?.dismiss(animated: true, completion: nil)
                     }
