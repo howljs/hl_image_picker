@@ -39,6 +39,7 @@ import com.luck.picture.lib.utils.DateUtils
 import com.luck.picture.lib.utils.MediaUtils
 import com.luck.picture.lib.utils.SandboxTransformUtils;
 import com.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener
+import com.luck.picture.lib.language.LanguageConfig
 import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropImageEngine
 import com.yalantis.ucrop.model.AspectRatio
@@ -135,6 +136,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                 .setPermissionDeniedListener { fragment, permissionArray, _, _ ->
                     handlePermissionDenied(fragment, permissionArray)
                 }
+                .setLanguage(LanguageConfig.ENGLISH)
                 .setSandboxFileEngine(AndroidQSandboxFileEngine())
                 .forResultActivity(object : OnResultCallbackListener<LocalMedia> {
                     override fun onResult(result: ArrayList<LocalMedia>?) {
@@ -202,6 +204,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                 .setCropEngine(getCropFileEngine())
                 .setVideoThumbnailListener(getVideoThumbnail())
                 .setRecordVideoMaxSecond(maxDuration)
+                .setLanguage(LanguageConfig.ENGLISH)
                 .setSelectMaxDurationSecond(maxDuration)
                 .setSelectMinDurationSecond(minDuration)
                 .setPermissionDeniedListener { fragment, permissionArray, _, _ ->
