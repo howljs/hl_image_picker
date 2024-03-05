@@ -1,3 +1,11 @@
+## 1.2.13
+
+* Set default language to English (Android)
+* Add ucrop to hl_image_picker to support rotate image (Android)
+* Fix issue of not returning image when cropper screen is closed. (iOS)
+* Added the ability to change the toolbar title (Android)
+* Fix Android 10 storage access issue
+
 ## 1.2.12
 
 * Support crop multiple images

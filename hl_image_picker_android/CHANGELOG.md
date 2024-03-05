@@ -1,3 +1,9 @@
+## 1.2.8
+* Set default language to English
+* Add ucrop to hl_image_picker to support rotate image
+* Added the ability to change the toolbar title
+* Fix Android 10 storage access issue
+
 ## 1.2.7
 
 * Support crop multiple images

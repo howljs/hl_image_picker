@@ -1,3 +1,7 @@
+## 1.2.9
+
+* Fix issue of not returning image when cropper screen is closed
+
 ## 1.2.8
 
 * Support crop multiple images
