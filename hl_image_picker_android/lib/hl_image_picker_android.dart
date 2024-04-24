@@ -223,7 +223,7 @@ class HLImagePickerAndroid extends HLImagePickerPlatform {
       CropAspectRatioPreset.ratio16x9
     ];
     final data = await methodChannel.invokeMethod('openCropper', {
-      'imagePath': imagePath,
+      'imagePath': Uri.encodeFull(imagePath),
       'ratioX': cropOptions?.aspectRatio?.ratioX,
       'ratioY': cropOptions?.aspectRatio?.ratioY,
       'aspectRatioPresets': (cropOptions?.aspectRatioPresets ?? defaultPresets)

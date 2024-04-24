@@ -1,3 +1,7 @@
+## 1.2.14
+
+* Decode/Encode the media path
+
 ## 1.2.13
 
 * Set default language to English (Android)

@@ -1,3 +1,7 @@
+## 1.2.9
+
+* Encode the path when opening the cropper
+
 ## 1.2.8
 * Set default language to English
 * Add ucrop to hl_image_picker to support rotate image
