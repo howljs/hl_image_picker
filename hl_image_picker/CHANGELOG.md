@@ -1,6 +1,7 @@
 ## 1.2.14
 
 * Decode/Encode the media path
+* Fix issue of not returning image when picker is canceled
 
 ## 1.2.13
 

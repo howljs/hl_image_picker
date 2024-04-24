@@ -1,6 +1,7 @@
 ## 1.2.9
 
 * Encode the path when opening the cropper
+* Fix issue of not returning image when picker is canceled
 
 ## 1.2.8
 * Set default language to English
