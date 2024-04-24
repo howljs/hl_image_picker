@@ -148,7 +148,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                     }
 
                     override fun onCancel() {
-
+                        mediaPickerResult?.error("CANCELED", "User has canceled the picker", null)
                     }
                 })
     }
@@ -242,7 +242,8 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                     }
 
                     override fun onCancel() {
-                        shouldReturnOnDestroy = true
+                        shouldReturnOnDestroy = false
+                        mediaPickerResult?.error("CANCELED", "User has canceled the picker", null)
                     }
                 })
     }
