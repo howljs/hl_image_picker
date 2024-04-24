@@ -24,7 +24,7 @@ class HLPickerItem {
   final String? thumbnail;
 
   factory HLPickerItem.fromMap(Map<dynamic, dynamic> json) => HLPickerItem(
-        path: json['path'],
+        path: Uri.decodeFull(json['path']),
         id: json['id'],
         name: json['name'],
         mimeType: json['mimeType'],

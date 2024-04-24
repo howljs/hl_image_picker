@@ -1,3 +1,7 @@
+## 1.2.10
+
+* Encode the path when opening the cropper
+
 ## 1.2.9
 
 * Fix issue of not returning image when cropper screen is closed

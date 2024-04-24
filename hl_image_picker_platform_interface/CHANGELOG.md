@@ -1,3 +1,7 @@
+## 1.2.4
+
+* Add decode path
+
 ## 1.2.3
 
 * Deprecate `recordVideoMaxSecond` in HLImagePickerOptions
