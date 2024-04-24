@@ -242,7 +242,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                     }
 
                     override fun onCancel() {
-                        shouldReturnOnDestroy = false
+                        shouldReturnOnDestroy = true
                     }
                 })
     }
