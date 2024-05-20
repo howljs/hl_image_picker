@@ -26,20 +26,21 @@ import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.config.SelectModeConfig
 import com.luck.picture.lib.config.SelectorConfig
 import com.luck.picture.lib.dialog.RemindDialog
+import com.luck.picture.lib.engine.UriToFileTransformEngine
 import com.luck.picture.lib.entity.LocalMedia
-import com.luck.picture.lib.engine.UriToFileTransformEngine;
 import com.luck.picture.lib.interfaces.OnInjectLayoutResourceListener
+import com.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
+import com.luck.picture.lib.language.LanguageConfig
 import com.luck.picture.lib.permissions.PermissionConfig
+import com.luck.picture.lib.permissions.PermissionUtil
 import com.luck.picture.lib.style.BottomNavBarStyle
 import com.luck.picture.lib.style.PictureSelectorStyle
 import com.luck.picture.lib.style.SelectMainStyle
 import com.luck.picture.lib.style.TitleBarStyle
 import com.luck.picture.lib.utils.DateUtils
 import com.luck.picture.lib.utils.MediaUtils
-import com.luck.picture.lib.utils.SandboxTransformUtils;
-import com.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener
-import com.luck.picture.lib.language.LanguageConfig
+import com.luck.picture.lib.utils.SandboxTransformUtils
 import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropImageEngine
 import com.yalantis.ucrop.model.AspectRatio
@@ -55,6 +56,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import java.io.File
 import java.net.URLConnection
+
 
 private class AndroidQSandboxFileEngine : UriToFileTransformEngine {
     override fun onUriToFileAsyncTransform(
@@ -133,10 +135,11 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                 .setVideoThumbnailListener(getVideoThumbnail())
                 .setRecordVideoMaxSecond(recordVideoMaxSecond)
                 .setCompressEngine(getCompressFileEngine(compressQuality, compressFormat, maxWidth, maxHeight))
-                .setPermissionDeniedListener { fragment, permissionArray, _, _ ->
-                    handlePermissionDenied(fragment, permissionArray)
+                .setPermissionDeniedListener { fragment, permissionArray, requestCode, _ ->
+                    handlePermissionDenied(fragment, permissionArray, requestCode)
                 }
                 .setLanguage(LanguageConfig.ENGLISH)
+                .setDefaultLanguage(LanguageConfig.ENGLISH)
                 .setSandboxFileEngine(AndroidQSandboxFileEngine())
                 .forResultActivity(object : OnResultCallbackListener<LocalMedia> {
                     override fun onResult(result: ArrayList<LocalMedia>?) {
@@ -205,10 +208,11 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                 .setVideoThumbnailListener(getVideoThumbnail())
                 .setRecordVideoMaxSecond(maxDuration)
                 .setLanguage(LanguageConfig.ENGLISH)
+                .setDefaultLanguage(LanguageConfig.ENGLISH)
                 .setSelectMaxDurationSecond(maxDuration)
                 .setSelectMinDurationSecond(minDuration)
-                .setPermissionDeniedListener { fragment, permissionArray, _, _ ->
-                    handlePermissionDenied(fragment, permissionArray)
+                .setPermissionDeniedListener { fragment, permissionArray, requestCode, _ ->
+                    handlePermissionDenied(fragment, permissionArray, requestCode)
                 }
                 .setCustomLoadingListener { context -> CustomLoadingDialog(context, uiStyle.getOrElse("loadingText") { "Loading" } as String) }
                 .setSelectLimitTipsListener { context, _, config, limitType ->
@@ -346,7 +350,7 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
         }
     }
 
-    private fun handlePermissionDenied(fragment: Fragment, permissionArray: Array<String>?) {
+    private fun handlePermissionDenied(fragment: Fragment, permissionArray: Array<String>?, requestCode: Int) {
         val message: String = if (TextUtils.equals(permissionArray?.get(0), PermissionConfig.CAMERA[0])) {
             uiStyle.getOrElse("noCameraPermissionText") {"No permission to access camera"} as String
         } else if (TextUtils.equals(permissionArray?.get(0), Manifest.permission.RECORD_AUDIO)) {
@@ -354,7 +358,15 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
         } else {
             uiStyle.getOrElse("noAlbumPermissionText") {"No permission to access album"} as String
         }
-        showDialog(fragment.context, message)
+        val dialog = RemindDialog.buildDialog(fragment.context, message)
+        dialog.setButtonText(uiStyle.getOrElse("okText") {"OK"} as String)
+        dialog.setButtonTextColor(Color.parseColor("#007AFF"))
+        dialog.setContentTextColor(Color.parseColor("#000000"))
+        dialog.setOnDialogClickListener {
+            dialog.dismiss()
+            PermissionUtil.goIntentSetting(fragment, requestCode);
+        }
+        dialog.show()
     }
 
     private fun showDialog(context: Context?, message: String) {

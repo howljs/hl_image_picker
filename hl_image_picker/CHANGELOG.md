@@ -1,3 +1,7 @@
+## 1.2.15
+
+* can't interact with the screen when onPress backHandler #31
+
 ## 1.2.14
 
 * Decode/Encode the media path

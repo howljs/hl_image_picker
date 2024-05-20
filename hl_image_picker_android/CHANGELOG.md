@@ -1,3 +1,7 @@
+## 1.2.10
+
+* can't interact with the screen when onPress backHandler #31
+
 ## 1.2.9
 
 * Encode the path when opening the cropper
