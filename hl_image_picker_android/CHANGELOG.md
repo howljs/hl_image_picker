@@ -1,3 +1,7 @@
+## 1.2.11
+
+* can't interact with the screen when onPress backHandler #31
+
 ## 1.2.10
 
 * can't interact with the screen when onPress backHandler #31

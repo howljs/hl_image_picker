@@ -366,6 +366,9 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
             dialog.dismiss()
             PermissionUtil.goIntentSetting(fragment, requestCode);
         }
+        dialog.setOnCancelListener {
+            PermissionUtil.goIntentSetting(fragment, requestCode);
+        }
         dialog.show()
     }
 
